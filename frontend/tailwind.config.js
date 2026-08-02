@@ -8,31 +8,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#141714',
-        'surface-dim': '#131313',
-        'surface-container-lowest': '#0e0e0e',
-        'surface-container-low': '#1c1b1b',
-        'surface-container': '#201f1f',
-        'surface-container-high': '#2a2a2a',
-        'surface-container-highest': '#353534',
-        'secondary-bg': '#24241D',
-        surface: '#333125',
-        outline: '#99907c',
-        'outline-variant': '#484737',
-        primary: '#d4af37',
-        'primary-hover': '#f2ca50',
-        'primary-accent': '#6E6953',
-        'luxury-accent': '#9A9379',
-        'on-primary': '#3c2f00',
-        'on-surface': '#F4F2EC',
-        'on-surface-variant': '#B8B39D',
-        'on-background': '#F4F2EC',
-        muted: '#7D7867'
+        background: '#0D0E0E', // Matte Black
+        'surface-dim': '#111312',
+        'surface-container-lowest': '#090A0A',
+        'surface-container-low': '#161817',
+        'surface-container': '#1C1F1D', // Deep Charcoal
+        'surface-container-high': '#242825', // Deep Olive/Charcoal blend
+        'surface-container-highest': '#2D322E',
+        'secondary-bg': '#1B201B', // Deep Olive undertone
+        surface: '#292C26',
+        outline: '#7A7363', // Dark Bronze Outline
+        'outline-variant': '#3D382B', // Subtle Dark Bronze
+        primary: '#C9A86A', // Warm Metallic Champagne Gold
+        'primary-hover': '#D6B77B', // Brightened Warm Gold
+        'primary-accent': '#594F3B',
+        'luxury-accent': '#8C7F67',
+        'on-primary': '#1A1405',
+        'on-surface': '#F5F2EA', // Soft Ivory
+        'on-surface-variant': '#C7C2B4', // Warm Off-White
+        'on-background': '#F5F2EA',
+        muted: '#857F71'
       },
       fontFamily: {
-        serif: ['Cormorant Garamond', 'Noto Serif', 'serif'],
+        serif: ['Cormorant Garamond', 'Noto Serif Arabic', 'serif'],
         sans: ['Inter', 'Manrope', 'sans-serif'],
-        display: ['Cormorant Garamond', 'Noto Serif', 'serif']
+        display: ['Cormorant Garamond', 'Noto Serif Arabic', 'serif']
       },
       fontSize: {
         'display-hero': ['4.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
@@ -49,8 +49,8 @@ export default {
         'element-gap-md': '24px'
       },
       boxShadow: {
-        'gold-glow': '0 0 35px rgba(212, 175, 55, 0.15)',
-        'gold-glow-lg': '0 0 60px rgba(212, 175, 55, 0.25)'
+        'gold-glow': '0 0 35px rgba(201, 168, 106, 0.18)',
+        'gold-glow-lg': '0 0 60px rgba(201, 168, 106, 0.28)'
       }
     },
   },

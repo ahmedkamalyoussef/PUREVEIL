@@ -6,13 +6,19 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { getImageUrl } from '../utils/imageUrl';
 
 export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
+  const { settings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const storeLogo = getImageUrl(settings.logo || '/logo.png');
+  const storeName = lang === 'ar' ? (settings.storeName || 'PURE VEIL') : (settings.storeNameEn || 'PURE VEIL');
 
   const navItems = [
     { path: '/admin', label: t('لوحة التحكم', 'Dashboard'), icon: LayoutDashboard },
@@ -36,8 +42,8 @@ export const AdminLayout: React.FC = () => {
           {/* Admin Header / Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="PURE VEIL" className="h-8 w-auto filter drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]" />
-              <span className="font-serif text-2xl font-bold gold-gradient-text">PURE VEIL</span>
+              <img src={storeLogo} alt={storeName} className="h-8 w-auto filter drop-shadow-[0_0_8px_rgba(201,168,106,0.4)]" />
+              <span className="font-serif text-2xl font-bold gold-gradient-text">{storeName}</span>
             </Link>
             <div className="px-3 py-2 bg-primary/10 border border-primary/20 rounded-xl text-xs flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-primary" />

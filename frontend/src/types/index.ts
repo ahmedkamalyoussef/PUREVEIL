@@ -115,20 +115,32 @@ export interface OrderItem {
   size?: string;
   price: number;
   quantity: number;
+  productImage?: string;
+  product_image?: string;
 }
 
 export interface Order {
   id: number;
   user_id?: number | null;
+  userId?: number | null;
   customer_name: string;
+  customerName?: string;
   customer_email?: string;
+  customerEmail?: string;
   customer_phone?: string;
+  customerPhone?: string;
   subtotal: number;
   shipping_fee: number;
+  shippingFee?: number;
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  payment_status?: 'paid' | 'unpaid' | 'refunded';
+  paymentStatus?: 'paid' | 'unpaid' | 'refunded';
   payment_method?: string;
-  created_at: string;
+  paymentMethod?: string;
+  created_at?: string;
+  createdAt?: string;
+  date?: string;
   items?: OrderItem[];
 }
 

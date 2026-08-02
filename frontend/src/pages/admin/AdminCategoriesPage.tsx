@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, Search, X, Check, Globe, Sparkles, Layers, FileText, MoveUp, MoveDown } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Plus, Edit2, Trash2, Search, X, Check, Globe, Sparkles, Layers, MoveUp, MoveDown, RefreshCw } from 'lucide-react';
 import { Category } from '../../types';
 import { fetchCollections, createCollectionApi, updateCollectionApi, deleteCollectionApi } from '../../services/apiService';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -7,6 +7,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { useConfirm } from '../../contexts/ConfirmModalContext';
 import { ImageUploader } from '../../components/ImageUploader';
 import { SafeImage } from '../../components/SafeImage';
+import { Pagination } from '../../components/Pagination';
 
 export const AdminCategoriesPage: React.FC = () => {
   const { t } = useLanguage();
@@ -16,10 +17,12 @@ export const AdminCategoriesPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [activeTab, setActiveTab] = useState<'basic' | 'bilingual' | 'seo'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'bilingual'>('basic');
 
   const [form, setForm] = useState<{
     name: string;
@@ -29,10 +32,6 @@ export const AdminCategoriesPage: React.FC = () => {
     image: string;
     displayOrder: number;
     status: 'active' | 'inactive';
-    seoTitle: string;
-    seoTitleEn: string;
-    seoDescription: string;
-    seoDescriptionEn: string;
   }>({
     name: '',
     nameEn: '',
@@ -40,14 +39,10 @@ export const AdminCategoriesPage: React.FC = () => {
     descriptionEn: '',
     image: '',
     displayOrder: 1,
-    status: 'active',
-    seoTitle: '',
-    seoTitleEn: '',
-    seoDescription: '',
-    seoDescriptionEn: ''
+    status: 'active'
   });
 
-  const loadCollections = async () => {
+  const loadCollections = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchCollections();
@@ -58,11 +53,11 @@ export const AdminCategoriesPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError, t]);
 
   useEffect(() => {
     loadCollections();
-  }, []);
+  }, [loadCollections]);
 
   const handleOpenAdd = () => {
     setEditingCategory(null);
@@ -74,30 +69,22 @@ export const AdminCategoriesPage: React.FC = () => {
       descriptionEn: '',
       image: '',
       displayOrder: categories.length + 1,
-      status: 'active',
-      seoTitle: '',
-      seoTitleEn: '',
-      seoDescription: '',
-      seoDescriptionEn: ''
+      status: 'active'
     });
     setModalOpen(true);
   };
 
-  const handleOpenEdit = (c: Category) => {
-    setEditingCategory(c);
+  const handleOpenEdit = (cat: Category) => {
+    setEditingCategory(cat);
     setActiveTab('basic');
     setForm({
-      name: c.name || '',
-      nameEn: c.nameEn || c.name_en || '',
-      description: c.description || '',
-      descriptionEn: c.descriptionEn || c.description_en || '',
-      image: c.image || '',
-      displayOrder: c.displayOrder || c.display_order || 1,
-      status: c.status || 'active',
-      seoTitle: c.seoTitle || c.seo_title || '',
-      seoTitleEn: c.seoTitleEn || c.seo_title_en || '',
-      seoDescription: c.seoDescription || c.seo_description || '',
-      seoDescriptionEn: c.seoDescriptionEn || c.seo_description_en || ''
+      name: cat.name || '',
+      nameEn: cat.nameEn || cat.name_en || '',
+      description: cat.description || '',
+      descriptionEn: cat.descriptionEn || cat.description_en || '',
+      image: cat.image || '',
+      displayOrder: cat.displayOrder || cat.display_order || 1,
+      status: cat.status || 'active'
     });
     setModalOpen(true);
   };
@@ -105,7 +92,7 @@ export const AdminCategoriesPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     const isConfirmed = await confirm({
       title: t('حذف المجموعة العطرية', 'Delete Fragrance Collection'),
-      message: t('هل أنت تأكد من حذف هذه المجموعة؟ سيتم تنظيف غلاف المجموعة من السيرفر إذا لم يكن مستخدماً في مكان آخر.', 'Are you sure you want to delete this collection? Associated files will be safely removed.'),
+      message: t('هل أنت تأكد من حذف هذه المجموعة؟ سيتم فك ارتباط العطور المسجلة تحتها وتنظيف صورتها من السيرفر.', 'Are you sure you want to delete this collection? Associated products will be unlinked and file cleaned up.'),
       confirmText: t('نعم، احذف', 'Yes, Delete'),
       cancelText: t('تراجع', 'Cancel'),
       type: 'danger'
@@ -115,7 +102,7 @@ export const AdminCategoriesPage: React.FC = () => {
 
     try {
       await deleteCollectionApi(id);
-      showSuccess(t('تم حذف المجموعة العطرية وتنظيف ملفات الغلاف بنجاح', 'Collection deleted and cover image cleaned up'));
+      showSuccess(t('تم حذف المجموعة العطرية وتنظيف ملفاتها بنجاح', 'Collection deleted successfully'));
       loadCollections();
     } catch (err) {
       showError(t('فشل حذف المجموعة العطرية', 'Failed to delete collection'));
@@ -125,8 +112,8 @@ export const AdminCategoriesPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.image) {
-      showError(t('يرجى رفع غلاف المجموعة العطرية عبر Multer', 'Please upload a collection cover image'));
+    if (!form.name) {
+      showError(t('الرجاء إدخال اسم المجموعة بالعربية', 'Please enter Arabic collection name'));
       return;
     }
 
@@ -150,16 +137,18 @@ export const AdminCategoriesPage: React.FC = () => {
     (c.nameEn || c.name_en || '').toLowerCase().includes(search.toLowerCase())
   );
 
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl font-bold text-on-surface">
-            {t('إدارة المجموعات العطرية والـ SEO', 'Fragrance Collections & SEO')}
+            {t('إدارة المجموعات العطرية', 'Fragrance Collections Management')}
           </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            {t('تحكم كامل بالمجموعات العطرية، الأغلفة من Multer، والترتيب التنازلي للمتجر', 'Full admin control over collections, Multer uploaded covers, and display order')}
+          <p className="text-xs text-on-surface-variant mt-1">
+            {t('تحكم كامل بالمجموعات العطرية الأغلفة من Multer، والترتيب التنازلي للمتجر', 'Full admin control over collections, Multer uploaded covers, and display order')}
           </p>
         </div>
 
@@ -178,8 +167,8 @@ export const AdminCategoriesPage: React.FC = () => {
           <input
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder={t('البحث عن اسم المجموعة...', 'Search collections...')}
+            onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
+            placeholder={t('البحث عن مجموعة عطرية...', 'Search collection...')}
             className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-4 py-2.5 pl-10 text-xs text-on-surface focus:outline-none focus:border-primary"
           />
           <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
@@ -190,71 +179,77 @@ export const AdminCategoriesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Collections Grid */}
+      {/* Categories Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-muted">{t('جاري تحميل المجموعات...', 'Loading collections...')}</div>
-        ) : filtered.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-muted">{t('لا توجد مجموعات عطرية', 'No collections found')}</div>
+          <div className="col-span-full py-16 text-center text-xs text-muted flex items-center justify-center gap-2">
+            <RefreshCw className="w-5 h-5 animate-spin text-primary" />
+            <span>{t('جاري تحميل المجموعات...', 'Loading collections...')}</span>
+          </div>
+        ) : paginated.length === 0 ? (
+          <div className="col-span-full py-16 text-center text-xs text-muted">
+            {t('لا توجد مجموعات عطرية مطابقة', 'No collections found')}
+          </div>
         ) : (
-          filtered.map(c => (
-            <div key={c.id} className="glass-panel-gold rounded-3xl overflow-hidden border border-outline-variant/20 group hover:border-primary/50 transition-all flex flex-col justify-between">
-              <div>
-                <div className="relative h-48 bg-secondary-bg overflow-hidden">
-                  {c.image ? (
-                    <SafeImage src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted font-mono text-xs">{t('بدون غلاف', 'No Cover')}</div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-                  
-                  <div className="absolute top-3 right-3 px-3 py-1 bg-background/80 backdrop-blur-md rounded-full border border-primary/30 text-[10px] font-bold font-mono text-primary">
-                    #{c.displayOrder || c.display_order || 1}
-                  </div>
-                </div>
-
-                <div className="p-6 space-y-3">
-                  <div>
-                    <h3 className="font-serif text-xl font-bold text-on-surface group-hover:text-primary transition-colors">
-                      {c.name}
-                    </h3>
-                    <div className="text-xs text-muted font-sans mt-0.5">{c.nameEn || c.name_en}</div>
-                  </div>
-
-                  <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-                    {c.description || c.description_en || t('مجموعة عطرية ملكية حصرية من بيت عطور بيور فيل...', 'Exclusive fragrance collection...')}
-                  </p>
-
-                  <div className="flex items-center justify-between text-xs pt-2 border-t border-outline-variant/15">
-                    <span className="text-[11px] text-primary font-mono font-bold">
-                      {(c.productCount !== undefined ? c.productCount : c.product_count) !== undefined ? `${c.productCount !== undefined ? c.productCount : c.product_count} ${t('عطر', 'fragrances')}` : ''}
-                    </span>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'inactive' ? 'bg-gray-500/20 text-gray-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                      {c.status || 'active'}
-                    </span>
-                  </div>
+          paginated.map(c => (
+            <div key={c.id} className="glass-panel-gold rounded-3xl p-5 space-y-4 relative overflow-hidden group">
+              <div className="relative h-44 rounded-2xl overflow-hidden border border-outline-variant/20">
+                <SafeImage
+                  src={c.image}
+                  alt={c.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
+                <div className="absolute top-3 left-3 bg-background/80 backdrop-blur-md border border-outline-variant/20 px-2.5 py-1 rounded-xl text-[10px] font-bold text-primary font-mono">
+                  #{c.displayOrder || c.display_order || 1}
                 </div>
               </div>
 
-              <div className="p-4 bg-secondary-bg/30 border-t border-outline-variant/15 flex items-center justify-end gap-2">
-                <button
-                  onClick={() => handleOpenEdit(c)}
-                  className="px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary font-bold rounded-xl text-xs flex items-center gap-1.5 hover:bg-primary hover:text-on-primary transition-all"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  <span>{t('تعديل', 'Edit')}</span>
-                </button>
-                <button
-                  onClick={() => handleDelete(c.id)}
-                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+              <div>
+                <h3 className="font-serif text-xl font-bold text-on-surface">{c.name}</h3>
+                {(c.nameEn || c.name_en) && <p className="text-xs text-primary font-medium">{c.nameEn || c.name_en}</p>}
+                {c.description && <p className="text-xs text-muted line-clamp-2 mt-1">{c.description}</p>}
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-outline-variant/15 text-xs">
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                  (c.status || 'active') === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-500/20 text-gray-400'
+                }`}>
+                  {c.status || 'active'}
+                </span>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleOpenEdit(c)}
+                    className="px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary font-bold rounded-xl text-xs flex items-center gap-1.5 hover:bg-primary hover:text-on-primary transition-all"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>{t('تعديل', 'Edit')}</span>
+                  </button>
+                  <button
+                    onClick={() => handleDelete(c.id)}
+                    className="p-2 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           ))
         )}
       </div>
+
+      {filtered.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filtered.length / pageSize)}
+          totalRecords={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+          pageSizeOptions={[3, 6, 12, 24]}
+        />
+      )}
 
       {/* Modal */}
       {modalOpen && (
@@ -295,16 +290,6 @@ export const AdminCategoriesPage: React.FC = () => {
                 <Globe className="w-4 h-4" />
                 <span>{t('الوصف التوضيحي', 'Descriptions')}</span>
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('seo')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'seo' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
-              >
-                <FileText className="w-4 h-4" />
-                <span>{t('إعدادات SEO', 'SEO Settings')}</span>
-              </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -315,54 +300,53 @@ export const AdminCategoriesPage: React.FC = () => {
                       <label className="block text-muted mb-1">{t('اسم المجموعة بالعربية *', 'Collection Arabic Name *')}</label>
                       <input
                         type="text"
+                        required
                         value={form.name}
                         onChange={e => setForm({ ...form, name: e.target.value })}
-                        required
-                        placeholder="المجموعة الشرقية"
+                        placeholder="العطور الشرقية الفاخرة"
                         className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none focus:border-primary"
                       />
                     </div>
+
                     <div>
-                      <label className="block text-muted mb-1">{t('اسم المجموعة بالإنجليزية *', 'Collection English Name *')}</label>
+                      <label className="block text-muted mb-1">{t('اسم المجموعة بالإنجليزية', 'Collection English Name')}</label>
                       <input
                         type="text"
                         value={form.nameEn}
                         onChange={e => setForm({ ...form, nameEn: e.target.value })}
-                        required
-                        placeholder="Oriental Collection"
+                        placeholder="Oriental Luxury Fragrances"
                         className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none focus:border-primary"
                       />
                     </div>
                   </div>
 
-                  {/* Reusable Image Uploader */}
                   <ImageUploader
-                    folder="categories"
-                    value={form.image}
-                    onChange={url => setForm({ ...form, image: url })}
-                    label={t('غلاف المجموعة العطرية (Multer Upload) *', 'Collection Cover Image (Multer Upload) *')}
+                    currentImage={form.image}
+                    folder="collections"
+                    onImageUploaded={(url) => setForm({ ...form, image: url })}
+                    label={t('غلاف المجموعة (يتم رفعه عبر Multer وتخزينه في /uploads/collections)', 'Collection Cover Image')}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                     <div>
-                      <label className="block text-muted mb-1">{t('ترتيب العرض (Display Order)', 'Display Order')}</label>
+                      <label className="block text-muted mb-1">{t('ترتيب العرض بالمتجر', 'Display Order')}</label>
                       <input
                         type="number"
                         value={form.displayOrder}
                         onChange={e => setForm({ ...form, displayOrder: parseInt(e.target.value) || 1 })}
-                        className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none focus:border-primary font-mono"
+                        className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface font-mono focus:outline-none focus:border-primary"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-muted mb-1">{t('حالة المجموعة', 'Collection Status')}</label>
+                      <label className="block text-muted mb-1">{t('الحالة', 'Status')}</label>
                       <select
                         value={form.status}
                         onChange={e => setForm({ ...form, status: e.target.value as any })}
-                        className="w-full bg-secondary-bg border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none"
+                        className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none focus:border-primary font-bold"
                       >
-                        <option value="active">Active (ظاهرة بالمتجر والقائمة)</option>
-                        <option value="inactive">Inactive (مخفية)</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
                       </select>
                     </div>
                   </div>
@@ -372,12 +356,12 @@ export const AdminCategoriesPage: React.FC = () => {
               {activeTab === 'bilingual' && (
                 <div className="space-y-4 text-xs">
                   <div>
-                    <label className="block text-muted mb-1">{t('وصف المجموعة (عربي)', 'Arabic Description')}</label>
+                    <label className="block text-muted mb-1">{t('وصف المجموعة (بالعربية)', 'Arabic Description')}</label>
                     <textarea
                       rows={3}
                       value={form.description}
                       onChange={e => setForm({ ...form, description: e.target.value })}
-                      placeholder="تشكيلة فاخرة تجسد سحر الأصالة الشرقية..."
+                      placeholder="تشكيلة حصرية تجسد سحر الشرق الأصيل في زجاجات فاخرة..."
                       className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl p-3 text-on-surface focus:outline-none focus:border-primary"
                     />
                   </div>
@@ -395,34 +379,6 @@ export const AdminCategoriesPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 'seo' && (
-                <div className="space-y-4 text-xs">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-muted mb-1">{t('عنوان الصفحة (SEO Title Arabic)', 'SEO Title Arabic')}</label>
-                      <input
-                        type="text"
-                        value={form.seoTitle}
-                        onChange={e => setForm({ ...form, seoTitle: e.target.value })}
-                        placeholder="تسوق عطور المجموعة الشرقية | بيور فيل"
-                        className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none focus:border-primary"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-muted mb-1">{t('عنوان الصفحة (SEO Title English)', 'SEO Title English')}</label>
-                      <input
-                        type="text"
-                        value={form.seoTitleEn}
-                        onChange={e => setForm({ ...form, seoTitleEn: e.target.value })}
-                        placeholder="Shop Oriental Perfume Collection | PURE VEIL"
-                        className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-on-surface focus:outline-none focus:border-primary"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <div className="flex justify-end gap-3 pt-4 border-t border-outline-variant/15">
                 <button
                   type="button"
@@ -433,10 +389,10 @@ export const AdminCategoriesPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary-hover text-on-primary font-bold rounded-xl text-xs shadow-gold-glow hover:brightness-110 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-xl text-xs shadow-gold-glow hover:brightness-110 flex items-center gap-2"
                 >
                   <Check className="w-4 h-4" />
-                  <span>{editingCategory ? t('تحديث المجموعة', 'Update Collection') : t('حفظ المجموعة', 'Save Collection')}</span>
+                  <span>{editingCategory ? t('حفظ التغييرات', 'Save Changes') : t('إنشاء المجموعة', 'Create Collection')}</span>
                 </button>
               </div>
             </form>

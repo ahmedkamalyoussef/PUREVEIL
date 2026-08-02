@@ -32,8 +32,14 @@ export const getCart = async (req, res) => {
       (sum, item) => sum + item.unitPrice * item.quantity,
       0
     );
-    // Free shipping threshold at 30 KWD
-    const shippingFee = subtotal >= 30 || formattedItems.length === 0 ? 0 : 2.5;
+
+    // Fetch dynamic store settings
+    const [settingsRows] = await pool.query("SELECT shipping_fee, free_shipping_threshold FROM store_settings LIMIT 1");
+    const s = settingsRows[0] || {};
+    const baseShip = s.shipping_fee !== undefined ? Number(s.shipping_fee) : 2.0;
+    const threshold = s.free_shipping_threshold !== undefined ? Number(s.free_shipping_threshold) : 30.0;
+
+    const shippingFee = subtotal >= threshold || formattedItems.length === 0 ? 0 : baseShip;
     const total = subtotal + shippingFee;
 
     res.json({

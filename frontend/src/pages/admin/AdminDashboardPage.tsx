@@ -135,7 +135,7 @@ export const AdminDashboardPage: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-muted text-[11px]">
-                    {new Date(order.created_at).toLocaleDateString()}
+                    {new Date(order.created_at || order.createdAt || Date.now()).toLocaleDateString()}
                   </td>
                 </tr>
               ))}

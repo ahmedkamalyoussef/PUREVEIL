@@ -11,6 +11,7 @@ import {
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 import { useLanguage } from './LanguageContext';
+import { useSettings } from './SettingsContext';
 
 interface CartContextType {
   cart: CartItem[];
@@ -32,6 +33,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { isAuthenticated } = useAuth();
   const { showSuccess, showError } = useToast();
   const { t } = useLanguage();
+  const { settings } = useSettings();
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [subtotal, setSubtotal] = useState<number>(0);
@@ -40,13 +42,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   // Helper: Recalculate local totals for guest cart
-  const calculateLocalTotals = (items: CartItem[]) => {
+  const calculateLocalTotals = useCallback((items: CartItem[]) => {
     const sub = items.reduce((sum, item) => sum + (item.unitPrice || 0) * item.quantity, 0);
-    const ship = sub >= 30 || items.length === 0 ? 0 : 2.5;
+    const shipThreshold = settings.freeShippingThreshold || 30;
+    const baseShip = settings.shippingFee !== undefined ? settings.shippingFee : 2.0;
+    const ship = sub >= shipThreshold || items.length === 0 ? 0 : baseShip;
+
     setSubtotal(Number(sub.toFixed(3)));
     setShippingFee(Number(ship.toFixed(3)));
     setTotal(Number((sub + ship).toFixed(3)));
-  };
+  }, [settings.freeShippingThreshold, settings.shippingFee]);
 
   // Synchronize state with backend response
   const applyCartResponse = (data: CartDataResponse) => {

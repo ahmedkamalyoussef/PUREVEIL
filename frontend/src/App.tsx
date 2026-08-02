@@ -23,6 +23,8 @@ import { RegisterPage } from './pages/RegisterPage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage';
 
+import { SettingsProvider } from './contexts/SettingsContext';
+
 // Admin Layout & Pages
 import { AdminLayout } from './layouts/AdminLayout';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
@@ -80,38 +82,40 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <LanguageProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <ConfirmModalProvider>
-              <FavoritesProvider>
-                <CartProvider>
-                  <Routes>
-                    {/* Admin Console Routes (Admin only) */}
-                    <Route
-                      path="/admin"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <AdminLayout />
-                        </ProtectedRoute>
-                      }
-                    >
-                      <Route index element={<AdminDashboardPage />} />
-                      <Route path="products" element={<AdminProductsPage />} />
-                      <Route path="categories" element={<AdminCategoriesPage />} />
-                      <Route path="orders" element={<AdminOrdersPage />} />
-                      <Route path="users" element={<AdminUsersPage />} />
-                      <Route path="reports" element={<AdminReportsPage />} />
-                      <Route path="settings" element={<AdminSettingsPage />} />
-                    </Route>
+        <SettingsProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <ConfirmModalProvider>
+                <FavoritesProvider>
+                  <CartProvider>
+                    <Routes>
+                      {/* Admin Console Routes (Admin only) */}
+                      <Route
+                        path="/admin"
+                        element={
+                          <ProtectedRoute allowedRoles={['admin']}>
+                            <AdminLayout />
+                          </ProtectedRoute>
+                        }
+                      >
+                        <Route index element={<AdminDashboardPage />} />
+                        <Route path="products" element={<AdminProductsPage />} />
+                        <Route path="categories" element={<AdminCategoriesPage />} />
+                        <Route path="orders" element={<AdminOrdersPage />} />
+                        <Route path="users" element={<AdminUsersPage />} />
+                        <Route path="reports" element={<AdminReportsPage />} />
+                        <Route path="settings" element={<AdminSettingsPage />} />
+                      </Route>
 
-                    {/* Public Storefront Routes */}
-                    <Route path="/*" element={<PublicLayout />} />
-                  </Routes>
-                </CartProvider>
-              </FavoritesProvider>
-            </ConfirmModalProvider>
-          </ToastProvider>
-        </AuthProvider>
+                      {/* Public Storefront Routes */}
+                      <Route path="/*" element={<PublicLayout />} />
+                    </Routes>
+                  </CartProvider>
+                </FavoritesProvider>
+              </ConfirmModalProvider>
+            </ToastProvider>
+          </AuthProvider>
+        </SettingsProvider>
       </LanguageProvider>
     </BrowserRouter>
   );

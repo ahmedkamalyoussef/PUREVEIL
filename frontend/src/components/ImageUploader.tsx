@@ -5,8 +5,10 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { SafeImage } from './SafeImage';
 
 interface ImageUploaderProps {
-  value: string;
-  onChange: (url: string) => void;
+  value?: string;
+  onChange?: (url: string) => void;
+  currentImage?: string;
+  onImageUploaded?: (url: string) => void;
   folder?: 'products' | 'categories' | 'collections' | 'avatars' | 'banners';
   label?: string;
 }
@@ -14,9 +16,16 @@ interface ImageUploaderProps {
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
   value,
   onChange,
+  currentImage,
+  onImageUploaded,
   folder = 'products',
   label
 }) => {
+  const actualValue = value !== undefined ? value : (currentImage || '');
+  const handleImageChange = (url: string) => {
+    if (onChange) onChange(url);
+    if (onImageUploaded) onImageUploaded(url);
+  };
   const { t } = useLanguage();
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -30,7 +39,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     try {
       const uploadedUrl = await uploadImageApi(file, folder);
-      onChange(uploadedUrl);
+      handleImageChange(uploadedUrl);
     } catch (err: any) {
       const msg = err.response?.data?.message || t('فشل تحميل الصورة', 'Image upload failed');
       setError(msg);
@@ -51,12 +60,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     <div className="space-y-1.5 text-xs">
       {label && <label className="block text-muted font-semibold">{label}</label>}
 
-      {value ? (
+      {actualValue ? (
         /* Uploaded Image Preview */
         <div className="relative glass-panel rounded-2xl p-3 border border-outline-variant/30 flex items-center justify-between gap-4 group">
           <div className="flex items-center gap-3 truncate">
             <SafeImage
-              src={value}
+              src={actualValue}
               alt="Preview"
               className="w-14 h-14 object-cover rounded-xl bg-secondary-bg shrink-0 border border-primary/20"
             />
@@ -66,14 +75,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <span>{t('تم رفع الصورة', 'Uploaded')}</span>
               </span>
               <span className="text-[10px] text-muted truncate block mt-0.5 font-mono">
-                {value}
+                {actualValue}
               </span>
             </div>
           </div>
 
           <button
             type="button"
-            onClick={() => onChange('')}
+            onClick={() => handleImageChange('')}
             className="p-2 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors shrink-0"
             title={t('حذف الصورة', 'Remove image')}
           >

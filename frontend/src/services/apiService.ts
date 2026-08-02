@@ -60,6 +60,8 @@ export const fetchProducts = async (params?: {
   featured?: string;
   isNew?: string;
   status?: string;
+  page?: number;
+  limit?: number;
 }): Promise<Product[]> => {
   try {
     const response = await api.get('/products', { params });
@@ -67,6 +69,19 @@ export const fetchProducts = async (params?: {
   } catch (error) {
     console.error('Failed to fetch products:', error);
     return [];
+  }
+};
+
+export const fetchPaginatedProducts = async (params?: Record<string, any>): Promise<PaginatedResponse<Product>> => {
+  try {
+    const response = await api.get('/products', { params });
+    return {
+      data: response.data.data || [],
+      pagination: response.data.pagination,
+    };
+  } catch (error) {
+    console.error('Failed to fetch paginated products:', error);
+    return { data: [], pagination: undefined };
   }
 };
 
@@ -203,35 +218,61 @@ export const clearCartApi = async (): Promise<CartDataResponse> => {
   return response.data.data;
 };
 
+// Orders & Users Pagination Interfaces
+export interface PaginationMeta {
+  currentPage: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination?: PaginationMeta;
+}
+
 // Orders API
 export const createOrderApi = async (orderData: any): Promise<Order> => {
   const response = await api.post('/orders', orderData);
   return response.data.data;
 };
 
-export const fetchOrdersApi = async (): Promise<Order[]> => {
+export const fetchOrdersApi = async (params?: Record<string, any>): Promise<PaginatedResponse<Order>> => {
   try {
-    const response = await api.get('/orders');
-    return response.data.data;
+    const response = await api.get('/orders', { params });
+    return {
+      data: response.data.data || [],
+      pagination: response.data.pagination,
+    };
   } catch (error) {
     console.error('Failed to fetch orders:', error);
-    return [];
+    return { data: [], pagination: undefined };
   }
 };
 
-export const updateOrderStatusApi = async (id: number, status: string): Promise<Order> => {
+export const updateOrderStatusApi = async (id: number | string, status: string): Promise<Order> => {
   const response = await api.put(`/orders/${id}/status`, { status });
   return response.data.data;
 };
 
+export const updatePaymentStatusApi = async (id: number | string, paymentStatus: string): Promise<Order> => {
+  const response = await api.put(`/orders/${id}/payment-status`, { paymentStatus });
+  return response.data.data;
+};
+
 // Users API (Admin)
-export const fetchUsersApi = async (): Promise<User[]> => {
+export const fetchUsersApi = async (params?: Record<string, any>): Promise<PaginatedResponse<User>> => {
   try {
-    const response = await api.get('/users');
-    return response.data.data;
+    const response = await api.get('/users', { params });
+    return {
+      data: response.data.data || [],
+      pagination: response.data.pagination,
+    };
   } catch (error) {
     console.error('Failed to fetch users:', error);
-    return [];
+    return { data: [], pagination: undefined };
   }
 };
 
@@ -271,9 +312,65 @@ export const fetchDashboardStatsApi = async (): Promise<DashboardStats> => {
       totalOrders: 0,
       totalProducts: 0,
       totalUsers: 0,
-      recentOrders: []
+      recentOrders: [],
     };
   }
+};
+
+// Store Settings API
+export interface StoreSettings {
+  logo?: string;
+  favicon?: string;
+  storeName: string;
+  storeNameEn?: string;
+  supportEmail: string;
+  supportPhone: string;
+  whatsapp?: string;
+  storeAddress: string;
+  storeAddressEn?: string;
+  instagramUrl?: string;
+  twitterUrl?: string;
+  facebookUrl?: string;
+  shippingFee: number;
+  freeShippingThreshold: number;
+  copyrightText?: string;
+  copyrightTextEn?: string;
+  currency: string;
+}
+
+export const DEFAULT_STORE_SETTINGS: StoreSettings = {
+  logo: '/logo.png',
+  favicon: '/favicon.png',
+  storeName: 'PURE VEIL - بيور فيل',
+  storeNameEn: 'PURE VEIL Luxury Perfumes',
+  supportEmail: 'support@pureveil.com',
+  supportPhone: '+965 2200 8800',
+  whatsapp: '+965 2200 8800',
+  storeAddress: 'مدينة الكويت - برج العطور الفاخرة',
+  storeAddressEn: 'Kuwait City - Luxury Fragrance Tower',
+  instagramUrl: '#',
+  twitterUrl: '#',
+  facebookUrl: '#',
+  shippingFee: 2.0,
+  freeShippingThreshold: 30.0,
+  copyrightText: 'جميع الحقوق محفوظة.',
+  copyrightTextEn: 'All rights reserved.',
+  currency: 'KWD',
+};
+
+export const fetchSettingsApi = async (): Promise<StoreSettings> => {
+  try {
+    const response = await api.get('/settings');
+    return response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch settings:', error);
+    return DEFAULT_STORE_SETTINGS;
+  }
+};
+
+export const updateSettingsApi = async (data: Partial<StoreSettings>): Promise<StoreSettings> => {
+  const response = await api.put('/settings', data);
+  return response.data.data;
 };
 
 export default api;

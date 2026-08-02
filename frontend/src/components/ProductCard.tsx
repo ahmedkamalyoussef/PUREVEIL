@@ -150,15 +150,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex items-center justify-between pt-3 border-t border-outline-variant/15 mt-auto">
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="font-serif text-lg md:text-xl font-bold text-primary">
+              <span className="font-serif text-lg md:text-xl font-bold text-primary font-mono">
                 {currentPrice.toFixed(3)} {t('د.ك', 'KWD')}
               </span>
-              {product.oldPrice && (
-                <span className="text-xs text-muted line-through font-mono">
-                  {Number(product.oldPrice).toFixed(3)}
-                </span>
-              )}
             </div>
+            <span className="text-[10px] text-muted block mt-0.5">
+              {t(`السعر لحجم ${selectedSize}`, `Price for ${selectedSize}`)}
+            </span>
           </div>
 
           <button

@@ -29,9 +29,9 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onDismiss }) => {
   const typeConfig = {
     success: {
       icon: CheckCircle2,
-      border: 'border-emerald-500/40 bg-emerald-950/80 text-emerald-300',
-      iconColor: 'text-emerald-400',
-      bar: 'bg-emerald-400',
+      border: 'border-primary/40 bg-surface-container-high/90 text-on-surface shadow-gold-glow',
+      iconColor: 'text-primary',
+      bar: 'bg-primary',
     },
     error: {
       icon: AlertCircle,

@@ -1,11 +1,52 @@
 import bcrypt from "bcryptjs";
 import pool from "../config/db.js";
 
-// Admin: get all users
 export const getUsers = async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT id, name, email, role, created_at FROM users ORDER BY created_at DESC");
-    res.json({ success: true, count: rows.length, data: rows });
+    const { page, limit, search, role } = req.query;
+
+    let baseQuery = "FROM users WHERE 1=1";
+    const params = [];
+
+    if (search) {
+      baseQuery += " AND (name LIKE ? OR email LIKE ?)";
+      const term = `%${search.trim()}%`;
+      params.push(term, term);
+    }
+    if (role) {
+      baseQuery += " AND role = ?";
+      params.push(role);
+    }
+
+    let rows;
+    let pagination = null;
+
+    if (page || limit) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const pageSize = Math.max(1, parseInt(limit, 10) || 10);
+      const offset = (pageNum - 1) * pageSize;
+
+      const [countRes] = await pool.query(`SELECT COUNT(*) AS totalRecords ${baseQuery}`, params);
+      const totalRecords = countRes[0].totalRecords;
+      const totalPages = Math.ceil(totalRecords / pageSize);
+
+      const [uRows] = await pool.query(`SELECT id, name, email, role, created_at ${baseQuery} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset]);
+      rows = uRows;
+
+      pagination = {
+        currentPage: pageNum,
+        pageSize,
+        totalRecords,
+        totalPages,
+        hasNextPage: pageNum < totalPages,
+        hasPreviousPage: pageNum > 1,
+      };
+    } else {
+      const [allRows] = await pool.query(`SELECT id, name, email, role, created_at ${baseQuery} ORDER BY created_at DESC`, params);
+      rows = allRows;
+    }
+
+    res.json({ success: true, count: rows.length, data: rows, pagination });
   } catch (error) {
     console.error("getUsers error:", error);
     res.status(500).json({ success: false, message: "خطأ في الخادم", messageEn: "Server error" });

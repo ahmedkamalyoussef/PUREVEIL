@@ -5,16 +5,18 @@ import { useCart } from '../contexts/CartContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmModalContext';
+import { useSettings } from '../contexts/SettingsContext';
 
 import { SafeImage } from '../components/SafeImage';
 
 export const CartPage: React.FC = () => {
   const { cart, subtotal, shippingFee, total, updateQuantity, removeFromCart, clearCart } = useCart();
   const { lang, t } = useLanguage();
+  const { settings } = useSettings();
   const { showSuccess, showInfo } = useToast();
   const { confirm } = useConfirm();
 
-  const freeShippingThreshold = 30; // 30 KWD
+  const freeShippingThreshold = settings.freeShippingThreshold || 30;
   const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
 

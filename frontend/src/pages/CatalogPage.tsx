@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, Grid } from 'lucide-react';
 import { Product, Category } from '../types';
-import { fetchProducts, fetchCollections } from '../services/apiService';
+import { fetchPaginatedProducts, fetchCollections, PaginationMeta } from '../services/apiService';
 import { ProductCard } from '../components/ProductCard';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Pagination } from '../components/Pagination';
 
 export const CatalogPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,6 +13,14 @@ export const CatalogPage: React.FC = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    currentPage: 1,
+    pageSize: 9,
+    totalRecords: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
   const [loading, setLoading] = useState(true);
 
   // Filters State
@@ -19,14 +28,18 @@ export const CatalogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('search') || '');
   const [maxPrice, setMaxPrice] = useState<number>(200);
   const [featuredOnly, setFeaturedOnly] = useState<boolean>(searchParams.get('featured') === 'true');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(9);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const loadCatalogData = async () => {
       setLoading(true);
       try {
-        const [prodsData, collectionsData] = await Promise.all([
-          fetchProducts({
+        const [prodsRes, collectionsData] = await Promise.all([
+          fetchPaginatedProducts({
+            page: currentPage,
+            limit: pageSize,
             category: selectedCategory || undefined,
             search: searchQuery || undefined,
             maxPrice: maxPrice < 200 ? maxPrice : undefined,
@@ -34,7 +47,8 @@ export const CatalogPage: React.FC = () => {
           }),
           fetchCollections(),
         ]);
-        setProducts(prodsData);
+        setProducts(prodsRes.data);
+        if (prodsRes.pagination) setPagination(prodsRes.pagination);
         setCategories(collectionsData.categories || []);
       } catch (err) {
         console.error('Failed to load catalog data:', err);
@@ -44,7 +58,7 @@ export const CatalogPage: React.FC = () => {
     };
 
     loadCatalogData();
-  }, [selectedCategory, searchQuery, maxPrice, featuredOnly]);
+  }, [selectedCategory, searchQuery, maxPrice, featuredOnly, currentPage, pageSize]);
 
   const clearFilters = () => {
     setSelectedCategory('');
@@ -231,10 +245,22 @@ export const CatalogPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalRecords={pagination.totalRecords}
+                pageSize={pagination.pageSize}
+                onPageChange={(page) => setCurrentPage(page)}
+                onPageSizeChange={(size) => setPageSize(size)}
+                pageSizeOptions={[6, 9, 15, 30]}
+              />
             </div>
           )}
         </main>

@@ -11,6 +11,7 @@ import userRoutes from "./routes/userRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
 
 const app = express();
@@ -37,6 +38,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/favorites", favoriteRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/settings", settingsRoutes);
 
 // Error Middleware
 app.use(errorHandler);

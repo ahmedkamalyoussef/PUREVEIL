@@ -16,6 +16,20 @@ const formatProduct = (p, volumeOptions = [], notes = { top: [], topEn: [], hear
     highlightsEn = p.highlights_en ? p.highlights_en.split(',') : [];
   }
 
+  const formattedVolumes = volumeOptions.map(v => ({
+    id: v.id,
+    size: v.size,
+    price: parseFloat(v.price),
+    stock: v.stock || 0,
+    sku: v.sku || '',
+    displayOrder: v.display_order || 0
+  }));
+
+  // Determine starting price from size variants
+  const startingPrice = formattedVolumes.length > 0
+    ? Math.min(...formattedVolumes.map(v => v.price))
+    : (parseFloat(p.price) || 0);
+
   return {
     id: p.id,
     sku: p.sku,
@@ -31,15 +45,10 @@ const formatProduct = (p, volumeOptions = [], notes = { top: [], topEn: [], hear
     highlightsEn,
     tags: p.tags ? p.tags.split(',').map(s => s.trim()) : [],
     tagsEn: p.tags_en ? p.tags_en.split(',').map(s => s.trim()) : [],
-    seoTitle: p.seo_title,
-    seoTitleEn: p.seo_title_en,
-    seoDescription: p.seo_description,
-    seoDescriptionEn: p.seo_description_en,
     category: p.category_name || '',
     categoryEn: p.category_name_en || '',
     categoryId: p.category_id,
-    price: parseFloat(p.price) || 0,
-    oldPrice: p.old_price ? parseFloat(p.old_price) : null,
+    price: startingPrice,
     rating: parseFloat(p.rating) || 5.0,
     reviewsCount: p.reviews_count || 0,
     stock: p.stock || 0,
@@ -54,14 +63,7 @@ const formatProduct = (p, volumeOptions = [], notes = { top: [], topEn: [], hear
     },
     featured: Boolean(p.featured),
     isNew: Boolean(p.is_new),
-    volumeOptions: volumeOptions.map(v => ({
-      id: v.id,
-      size: v.size,
-      price: parseFloat(v.price),
-      stock: v.stock || 0,
-      sku: v.sku || '',
-      displayOrder: v.display_order || 0
-    })),
+    volumeOptions: formattedVolumes,
     notes,
     createdAt: p.created_at,
     updatedAt: p.updated_at
@@ -70,10 +72,9 @@ const formatProduct = (p, volumeOptions = [], notes = { top: [], topEn: [], hear
 
 export const getProducts = async (req, res) => {
   try {
-    const { category, search, maxPrice, featured, isNew, status } = req.query;
+    const { category, search, maxPrice, featured, isNew, status, page, limit } = req.query;
 
-    let query = `
-      SELECT p.*, c.name AS category_name, c.name_en AS category_name_en
+    let baseQuery = `
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       WHERE 1=1
@@ -81,32 +82,56 @@ export const getProducts = async (req, res) => {
     const params = [];
 
     if (category) {
-      query += " AND (c.name = ? OR c.name_en = ? OR p.category_id = ?)";
+      baseQuery += " AND (c.name = ? OR c.name_en = ? OR p.category_id = ?)";
       params.push(category, category, parseInt(category) || 0);
     }
     if (search) {
-      query += " AND (p.name LIKE ? OR p.name_en LIKE ? OR p.sku LIKE ? OR p.tags LIKE ? OR p.tags_en LIKE ?)";
+      baseQuery += " AND (p.name LIKE ? OR p.name_en LIKE ? OR p.sku LIKE ? OR p.tags LIKE ? OR p.tags_en LIKE ?)";
       const term = `%${search}%`;
       params.push(term, term, term, term, term);
     }
     if (maxPrice) {
-      query += " AND p.price <= ?";
+      baseQuery += " AND p.price <= ?";
       params.push(parseFloat(maxPrice));
     }
     if (featured === 'true' || featured === '1') {
-      query += " AND p.featured = 1";
+      baseQuery += " AND p.featured = 1";
     }
     if (isNew === 'true' || isNew === '1') {
-      query += " AND p.is_new = 1";
+      baseQuery += " AND p.is_new = 1";
     }
     if (status) {
-      query += " AND p.status = ?";
+      baseQuery += " AND p.status = ?";
       params.push(status);
     }
 
-    query += " ORDER BY p.id DESC";
+    let rows;
+    let pagination = null;
 
-    const [rows] = await pool.query(query, params);
+    if (page || limit) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const pageSize = Math.max(1, parseInt(limit, 10) || 10);
+      const offset = (pageNum - 1) * pageSize;
+
+      const [countRes] = await pool.query(`SELECT COUNT(*) AS totalRecords ${baseQuery}`, params);
+      const totalRecords = countRes[0].totalRecords;
+      const totalPages = Math.ceil(totalRecords / pageSize);
+
+      const [pRows] = await pool.query(`SELECT p.*, c.name AS category_name, c.name_en AS category_name_en ${baseQuery} ORDER BY p.id DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset]);
+      rows = pRows;
+
+      pagination = {
+        currentPage: pageNum,
+        pageSize,
+        totalRecords,
+        totalPages,
+        hasNextPage: pageNum < totalPages,
+        hasPreviousPage: pageNum > 1,
+      };
+    } else {
+      const [allRows] = await pool.query(`SELECT p.*, c.name AS category_name, c.name_en AS category_name_en ${baseQuery} ORDER BY p.id DESC`, params);
+      rows = allRows;
+    }
 
     // Fetch volume options & notes for all returned products
     const products = await Promise.all(
@@ -132,7 +157,7 @@ export const getProducts = async (req, res) => {
       })
     );
 
-    res.json({ success: true, data: products });
+    res.json({ success: true, data: products, pagination });
   } catch (error) {
     console.error("getProducts error:", error);
     res.status(500).json({ success: false, message: "خطأ في الخادم", messageEn: "Server error" });
@@ -183,9 +208,8 @@ export const createProduct = async (req, res) => {
     const {
       sku, name, nameEn, name_en, shortDescription, short_description, shortDescriptionEn, short_description_en,
       description, descriptionEn, description_en, usageInstructions, usage_instructions, usageInstructionsEn, usage_instructions_en,
-      highlights, highlightsEn, highlights_en, tags, tagsEn, tags_en, seoTitle, seo_title, seoTitleEn, seo_title_en,
-      seoDescription, seo_description, seoDescriptionEn, seo_description_en, categoryId, category_id,
-      price, oldPrice, old_price, stock, status, image, concentration, specs, featured, isNew, is_new,
+      highlights, highlightsEn, highlights_en, tags, tagsEn, tags_en, categoryId, category_id,
+      stock, status, image, concentration, specs, featured, isNew, is_new,
       volumeOptions, notes
     } = req.body;
 
@@ -197,14 +221,18 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ success: false, message: "اسم المنتج بالعربية والإنجليزية مطلوب", messageEn: "Product name in AR and EN is required" });
     }
 
+    // Determine price from first volume option
+    const basePrice = (Array.isArray(volumeOptions) && volumeOptions.length > 0 && volumeOptions[0].price !== undefined)
+      ? Number(volumeOptions[0].price)
+      : 0;
+
     const [result] = await pool.query(
       `INSERT INTO products (
         sku, name, name_en, short_description, short_description_en, description, description_en,
         usage_instructions, usage_instructions_en, highlights, highlights_en, tags, tags_en,
-        seo_title, seo_title_en, seo_description, seo_description_en, category_id, price,
-        old_price, stock, status, image, concentration, sillage, longevity, season, gender,
+        category_id, price, old_price, stock, status, image, concentration, sillage, longevity, season, gender,
         featured, is_new
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         finalSku, finalName, finalNameEn,
         shortDescription || short_description || null,
@@ -217,13 +245,8 @@ export const createProduct = async (req, res) => {
         JSON.stringify(highlightsEn || highlights_en || []),
         Array.isArray(tags) ? tags.join(',') : (tags || null),
         Array.isArray(tagsEn || tags_en) ? (tagsEn || tags_en).join(',') : (tagsEn || tags_en || null),
-        seoTitle || seo_title || null,
-        seoTitleEn || seo_title_en || null,
-        seoDescription || seo_description || null,
-        seoDescriptionEn || seo_description_en || null,
         categoryId || category_id || null,
-        price || 0,
-        oldPrice || old_price || null,
+        basePrice,
         stock || 0,
         status || 'active',
         image || null,
@@ -286,9 +309,8 @@ export const updateProduct = async (req, res) => {
     const {
       sku, name, nameEn, name_en, shortDescription, short_description, shortDescriptionEn, short_description_en,
       description, descriptionEn, description_en, usageInstructions, usage_instructions, usageInstructionsEn, usage_instructions_en,
-      highlights, highlightsEn, highlights_en, tags, tagsEn, tags_en, seoTitle, seo_title, seoTitleEn, seo_title_en,
-      seoDescription, seo_description, seoDescriptionEn, seo_description_en, categoryId, category_id,
-      price, oldPrice, old_price, stock, status, image, concentration, specs, featured, isNew, is_new,
+      highlights, highlightsEn, highlights_en, tags, tagsEn, tags_en, categoryId, category_id,
+      stock, status, image, concentration, specs, featured, isNew, is_new,
       volumeOptions, notes
     } = req.body;
 
@@ -298,6 +320,11 @@ export const updateProduct = async (req, res) => {
     }
 
     const oldImage = existing[0].image;
+
+    // Base price from first size variant
+    const basePrice = (Array.isArray(volumeOptions) && volumeOptions.length > 0 && volumeOptions[0].price !== undefined)
+      ? Number(volumeOptions[0].price)
+      : null;
 
     await pool.query(
       `UPDATE products SET
@@ -314,13 +341,9 @@ export const updateProduct = async (req, res) => {
         highlights_en = COALESCE(?, highlights_en),
         tags = COALESCE(?, tags),
         tags_en = COALESCE(?, tags_en),
-        seo_title = COALESCE(?, seo_title),
-        seo_title_en = COALESCE(?, seo_title_en),
-        seo_description = COALESCE(?, seo_description),
-        seo_description_en = COALESCE(?, seo_description_en),
         category_id = COALESCE(?, category_id),
         price = COALESCE(?, price),
-        old_price = COALESCE(?, old_price),
+        old_price = NULL,
         stock = COALESCE(?, stock),
         status = COALESCE(?, status),
         image = COALESCE(?, image),
@@ -343,17 +366,12 @@ export const updateProduct = async (req, res) => {
         usageInstructions || usage_instructions || null,
         usageInstructionsEn || usage_instructions_en || null,
         highlights ? JSON.stringify(highlights) : null,
-        highlightsEn || highlights_en ? JSON.stringify(highlightsEn || highlights_en) : null,
+        (highlightsEn || highlights_en) ? JSON.stringify(highlightsEn || highlights_en) : null,
         Array.isArray(tags) ? tags.join(',') : (tags || null),
         Array.isArray(tagsEn || tags_en) ? (tagsEn || tags_en).join(',') : (tagsEn || tags_en || null),
-        seoTitle || seo_title || null,
-        seoTitleEn || seo_title_en || null,
-        seoDescription || seo_description || null,
-        seoDescriptionEn || seo_description_en || null,
         categoryId || category_id || null,
-        price !== undefined ? price : null,
-        oldPrice !== undefined ? oldPrice : (old_price !== undefined ? old_price : null),
-        stock !== undefined ? stock : null,
+        basePrice,
+        stock || null,
         status || null,
         image || null,
         concentration || null,
@@ -367,12 +385,7 @@ export const updateProduct = async (req, res) => {
       ]
     );
 
-    // If image changed, clean up old image if unreferenced
-    if (image && image !== oldImage) {
-      await deleteFileIfUnused(oldImage);
-    }
-
-    // Replace Volume Options / Size Variants if provided
+    // Update Volume Options
     if (Array.isArray(volumeOptions)) {
       await pool.query("DELETE FROM product_volume_options WHERE product_id = ?", [id]);
       let vOrder = 0;
@@ -380,13 +393,13 @@ export const updateProduct = async (req, res) => {
         if (vol.size && vol.price !== undefined) {
           await pool.query(
             "INSERT INTO product_volume_options (product_id, size, price, stock, sku, display_order) VALUES (?, ?, ?, ?, ?, ?)",
-            [id, vol.size, vol.price, vol.stock || stock || 10, vol.sku || `${sku || 'PV'}-${vol.size}`, vOrder++]
+            [id, vol.size, vol.price, vol.stock || stock || 10, vol.sku || `${sku}-${vol.size}`, vOrder++]
           );
         }
       }
     }
 
-    // Replace Fragrance Notes if provided
+    // Update Fragrance Notes
     if (notes) {
       await pool.query("DELETE FROM product_notes WHERE product_id = ?", [id]);
       const insertNotes = async (list, listEn, type) => {
@@ -408,6 +421,11 @@ export const updateProduct = async (req, res) => {
       await insertNotes(notes.base, notes.baseEn, 'base');
     }
 
+    // Automatic file cleanup
+    if (image && oldImage && image !== oldImage) {
+      await deleteFileIfUnused(oldImage);
+    }
+
     res.json({ success: true, message: "تم تحديث المنتج بنجاح", messageEn: "Product updated successfully" });
   } catch (error) {
     console.error("updateProduct error:", error);
@@ -418,18 +436,20 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const [existing] = await pool.query("SELECT id, image FROM products WHERE id = ?", [id]);
-    if (existing.length === 0) {
+    const [rows] = await pool.query("SELECT id, image FROM products WHERE id = ?", [id]);
+
+    if (rows.length === 0) {
       return res.status(404).json({ success: false, message: "المنتج غير موجود", messageEn: "Product not found" });
     }
 
-    const prodImage = existing[0].image;
+    const imagePath = rows[0].image;
 
+    await pool.query("DELETE FROM product_volume_options WHERE product_id = ?", [id]);
+    await pool.query("DELETE FROM product_notes WHERE product_id = ?", [id]);
     await pool.query("DELETE FROM products WHERE id = ?", [id]);
 
-    // Automatic File Cleanup
-    if (prodImage) {
-      await deleteFileIfUnused(prodImage);
+    if (imagePath) {
+      await deleteFileIfUnused(imagePath);
     }
 
     res.json({ success: true, message: "تم حذف المنتج بنجاح", messageEn: "Product deleted successfully" });

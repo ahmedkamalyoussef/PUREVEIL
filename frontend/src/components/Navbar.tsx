@@ -4,8 +4,10 @@ import { ShoppingBag, Search, User as UserIcon, Heart, Globe, Menu, X, LogOut, S
 import { useCart } from '../contexts/CartContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 import { fetchCollections } from '../services/apiService';
 import { Category } from '../types';
+import { getImageUrl } from '../utils/imageUrl';
 
 import { SafeImage } from './SafeImage';
 
@@ -13,6 +15,7 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
   const { cartCount, setIsCartOpen } = useCart();
   const { lang, toggleLang, t } = useLanguage();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { settings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -35,6 +38,7 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
+  const storeLogo = getImageUrl(settings.logo || '/logo.png');
 
   return (
     <nav className="bg-background/85 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-outline-variant/10 transition-all duration-300">
@@ -44,12 +48,12 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
         <div className="flex items-center gap-8 md:gap-12">
           <Link to="/" className="flex items-center gap-3 group">
             <img 
-              src="/logo.png" 
-              alt="PURE VEIL" 
+              src={storeLogo} 
+              alt={settings.storeName || "PURE VEIL"} 
               className="h-10 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(212,175,55,0.4)] group-hover:scale-105 transition-transform" 
             />
             <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider gold-gradient-text">
-              PURE VEIL
+              {lang === 'ar' ? (settings.storeName || 'PURE VEIL') : (settings.storeNameEn || 'PURE VEIL')}
             </span>
           </Link>
 

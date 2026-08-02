@@ -2,9 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Instagram, Twitter, Facebook, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { getImageUrl } from '../utils/imageUrl';
 
 export const Footer: React.FC = () => {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
+  const { settings } = useSettings();
+
+  const storeLogo = getImageUrl(settings.logo || '/logo.png');
+  const storeName = lang === 'ar' ? (settings.storeName || 'PURE VEIL') : (settings.storeNameEn || 'PURE VEIL');
+  const storeAddress = lang === 'ar' ? (settings.storeAddress || 'مدينة الكويت') : (settings.storeAddressEn || 'Kuwait City');
+  const copyrightText = lang === 'ar' ? (settings.copyrightText || 'جميع الحقوق محفوظة.') : (settings.copyrightTextEn || 'All rights reserved.');
 
   return (
     <footer className="bg-surface-container-lowest border-t border-outline-variant/15 pt-16 pb-12 font-sans text-on-surface-variant">
@@ -14,8 +22,8 @@ export const Footer: React.FC = () => {
           {/* Brand Col */}
           <div className="space-y-4 md:col-span-1">
             <Link to="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="PURE VEIL" className="h-8 w-auto filter drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]" />
-              <span className="font-serif text-2xl font-bold gold-gradient-text">PURE VEIL</span>
+              <img src={storeLogo} alt={storeName} className="h-8 w-auto filter drop-shadow-[0_0_8px_rgba(201,168,106,0.4)]" />
+              <span className="font-serif text-2xl font-bold gold-gradient-text">{storeName}</span>
             </Link>
             <p className="text-xs text-muted leading-relaxed">
               {t(
@@ -24,9 +32,21 @@ export const Footer: React.FC = () => {
               )}
             </p>
             <div className="flex gap-3 pt-2">
-              <a href="#" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors"><Instagram className="w-4 h-4" /></a>
-              <a href="#" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors"><Twitter className="w-4 h-4" /></a>
-              <a href="#" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors"><Facebook className="w-4 h-4" /></a>
+              {settings.instagramUrl && settings.instagramUrl !== '#' && (
+                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {settings.twitterUrl && settings.twitterUrl !== '#' && (
+                <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors">
+                  <Twitter className="w-4 h-4" />
+                </a>
+              )}
+              {settings.facebookUrl && settings.facebookUrl !== '#' && (
+                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors">
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -59,15 +79,15 @@ export const Footer: React.FC = () => {
             <div className="space-y-2 text-muted">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-primary shrink-0" />
-                <span>{t('مدينة الكويت - برج العطور الفاخرة', 'Kuwait City - Luxury Fragrance Tower')}</span>
+                <span>{storeAddress}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary shrink-0" />
-                <span className="font-mono">+965 2200 8800</span>
+                <span className="font-mono">{settings.supportPhone}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary shrink-0" />
-                <span className="font-mono">support@pureveil.com</span>
+                <span className="font-mono">{settings.supportEmail}</span>
               </div>
             </div>
           </div>
@@ -76,7 +96,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-outline-variant/10 pt-6 text-center text-xs text-muted flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© {new Date().getFullYear()} PURE VEIL (بيور فيل). {t('جميع الحقوق محفوظة.', 'All rights reserved.')}</p>
+          <p>© {new Date().getFullYear()} {storeName}. {copyrightText}</p>
           <div className="flex items-center gap-2 text-primary font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>{t('عطور فاخرة بأسلوب ملكي رفيع', 'Exquisite Luxury Fragrances')}</span>

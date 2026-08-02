@@ -4,8 +4,8 @@
 
 @layer base {
   body {
-    background-color: #141714;
-    color: #F4F2EC;
+    background-color: #0D0E0E;
+    color: #F5F2EA;
     font-family: 'Inter', 'Manrope', sans-serif;
     overflow-x: hidden;
   }
@@ -15,35 +15,36 @@
   }
 }
 
-/* Glassmorphism Panels */
+/* Glassmorphism Panels with Warm Bronze & Champagne Gold hints */
 .glass-panel {
-  background: rgba(36, 36, 29, 0.55);
+  background: rgba(28, 31, 29, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(72, 71, 55, 0.35);
+  border: 1px solid rgba(61, 56, 43, 0.4);
 }
 
 .glass-panel-gold {
-  background: rgba(32, 31, 31, 0.7);
+  background: rgba(22, 24, 23, 0.75);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(201, 168, 106, 0.22);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(201, 168, 106, 0.06);
 }
 
-/* Luxury Gold Gradients */
+/* Luxury Warm Gold Gradients */
 .gold-gradient-text {
-  background: linear-gradient(135deg, #F4F2EC 0%, #D4AF37 50%, #9A9379 100%);
+  background: linear-gradient(135deg, #F5F2EA 0%, #C9A86A 55%, #8C7F67 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gold-gradient-bg {
-  background: linear-gradient(135deg, #D4AF37 0%, #C5A028 100%);
+  background: linear-gradient(135deg, #C9A86A 0%, #B89753 100%);
 }
 
 .dark-luxury-gradient {
-  background: linear-gradient(135deg, #141714 0%, #24241D 40%, #333125 70%, #141714 100%);
+  background: linear-gradient(135deg, #0D0E0E 0%, #161817 40%, #1E241E 75%, #0D0E0E 100%);
 }
 
 /* Custom Luxury Scrollbar */
@@ -53,16 +54,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #141714;
+  background: #0D0E0E;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #484737;
+  background: #3D382B;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4AF37;
+  background: #C9A86A;
 }
 
 /* Golden Aura Animation on Product Cards */
@@ -71,6 +72,6 @@
 }
 
 .gold-aura:hover {
-  box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.3);
-  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 12px 40px -10px rgba(201, 168, 106, 0.25);
+  border-color: rgba(201, 168, 106, 0.5);
 }
