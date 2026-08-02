@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #141714;
+    color: #F4F2EC;
+    font-family: 'Inter', 'Manrope', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', 'Noto Serif Arabic', serif;
+  }
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(36, 36, 29, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(72, 71, 55, 0.35);
+}
+
+.glass-panel-gold {
+  background: rgba(32, 31, 31, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.08);
+}
+
+/* Luxury Gold Gradients */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #F4F2EC 0%, #D4AF37 50%, #9A9379 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #D4AF37 0%, #C5A028 100%);
+}
+
+.dark-luxury-gradient {
+  background: linear-gradient(135deg, #141714 0%, #24241D 40%, #333125 70%, #141714 100%);
+}
+
+/* Custom Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141714;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #484737;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+/* Golden Aura Animation on Product Cards */
+.gold-aura {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gold-aura:hover {
+  box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.3);
+  border-color: rgba(212, 175, 55, 0.6);
+}

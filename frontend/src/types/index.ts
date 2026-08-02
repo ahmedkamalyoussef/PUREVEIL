@@ -1,0 +1,141 @@
+export interface User {
+  id: number | string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: 'admin' | 'customer';
+  createdAt?: string;
+}
+
+export interface VolumeOption {
+  id?: number;
+  size: string;
+  price: number;
+  stock?: number;
+  sku?: string;
+  displayOrder?: number;
+}
+
+export interface OlfactoryNotes {
+  top?: string[];
+  topEn?: string[];
+  heart?: string[];
+  heartEn?: string[];
+  base?: string[];
+  baseEn?: string[];
+}
+
+export interface ProductSpecs {
+  sillage?: string;
+  longevity?: string;
+  season?: string;
+  gender?: string;
+}
+
+export interface Product {
+  id: number | string;
+  sku: string;
+  name: string;
+  nameEn?: string;
+  shortDescription?: string;
+  shortDescriptionEn?: string;
+  description?: string;
+  descriptionEn?: string;
+  usageInstructions?: string;
+  usageInstructionsEn?: string;
+  highlights?: string[];
+  highlightsEn?: string[];
+  tags?: string[];
+  tagsEn?: string[];
+  seoTitle?: string;
+  seoTitleEn?: string;
+  seoDescription?: string;
+  seoDescriptionEn?: string;
+  category: string;
+  categoryEn?: string;
+  categoryId?: number | string;
+  price: number;
+  oldPrice?: number | string | null;
+  rating: number;
+  reviewsCount: number;
+  stock: number;
+  status: 'active' | 'out_of_stock' | 'draft';
+  image: string;
+  concentration?: string;
+  specs?: ProductSpecs;
+  featured?: boolean;
+  isNew?: boolean;
+  volumeOptions?: VolumeOption[];
+  notes?: OlfactoryNotes;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  nameEn?: string;
+  name_en?: string;
+  description?: string;
+  descriptionEn?: string;
+  description_en?: string;
+  image?: string;
+  displayOrder?: number;
+  display_order?: number;
+  status?: 'active' | 'inactive';
+  productCount?: number;
+  product_count?: number;
+  count?: number;
+  seoTitle?: string;
+  seo_title?: string;
+  seoTitleEn?: string;
+  seo_title_en?: string;
+  seoDescription?: string;
+  seo_description?: string;
+  seoDescriptionEn?: string;
+  seo_description_en?: string;
+}
+
+export interface CartItem {
+  id?: number;
+  productId: number | string;
+  productName?: string;
+  productNameEn?: string;
+  productImage?: string;
+  product?: Product;
+  size: string;
+  unitPrice: number;
+  quantity: number;
+}
+
+export interface OrderItem {
+  id?: number;
+  productId?: number;
+  name: string;
+  size?: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: number;
+  user_id?: number | null;
+  customer_name: string;
+  customer_email?: string;
+  customer_phone?: string;
+  subtotal: number;
+  shipping_fee: number;
+  total: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  payment_method?: string;
+  created_at: string;
+  items?: OrderItem[];
+}
+
+export interface DashboardStats {
+  totalRevenue: number;
+  totalOrders: number;
+  totalProducts: number;
+  totalUsers: number;
+  recentOrders: Order[];
+}
