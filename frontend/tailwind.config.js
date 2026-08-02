@@ -8,26 +8,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0D0E0E', // Matte Black
-        'surface-dim': '#111312',
-        'surface-container-lowest': '#090A0A',
-        'surface-container-low': '#161817',
-        'surface-container': '#1C1F1D', // Deep Charcoal
-        'surface-container-high': '#242825', // Deep Olive/Charcoal blend
-        'surface-container-highest': '#2D322E',
-        'secondary-bg': '#1B201B', // Deep Olive undertone
-        surface: '#292C26',
-        outline: '#7A7363', // Dark Bronze Outline
-        'outline-variant': '#3D382B', // Subtle Dark Bronze
-        primary: '#C9A86A', // Warm Metallic Champagne Gold
-        'primary-hover': '#D6B77B', // Brightened Warm Gold
-        'primary-accent': '#594F3B',
-        'luxury-accent': '#8C7F67',
-        'on-primary': '#1A1405',
-        'on-surface': '#F5F2EA', // Soft Ivory
-        'on-surface-variant': '#C7C2B4', // Warm Off-White
-        'on-background': '#F5F2EA',
-        muted: '#857F71'
+        background: '#242A23', // Rich Deep Olive Green (matching logo background)
+        'surface-dim': '#1E241D',
+        'surface-container-lowest': '#1A201A',
+        'surface-container-low': '#20251E',
+        'surface-container': '#20251E', // Dark Olive container
+        'surface-container-high': '#283027',
+        'surface-container-highest': '#2D362C',
+        'secondary-bg': '#20251E', // Dark Olive Surface
+        surface: '#20251E',
+        outline: '#494736', // Muted Olive Border
+        'outline-variant': '#494736',
+        primary: '#BCB496', // Lighter Warm Sand Beige (100% Beige, Clear & Elegant)
+        'primary-hover': '#C8C0A4', // Slightly Brighter Sand Beige
+        'primary-accent': '#494736',
+        'luxury-accent': '#BCB496',
+        'on-primary': '#20251E', // Dark Olive text on primary beige
+        'on-surface': '#C8C0A4', // Lighter Warm Sand Beige (Headings)
+        'on-surface-variant': '#B8B094', // Lighter Sand Beige (Body Text)
+        'on-background': '#C8C0A4',
+        muted: '#8E866F', // Legible Muted Sand Beige
+        // Semantic UI Feedback Accents
+        favorite: '#D32F2F', // Rich Premium Red for Active Heart
+        error: '#C62828', // Refined Crimson
+        success: '#2E7D32', // Elegant Muted Green
+        warning: '#E65100', // Warm Amber
+        info: '#455A64' // Muted Slate/Blue-Gray
       },
       fontFamily: {
         serif: ['Cormorant Garamond', 'Noto Serif Arabic', 'serif'],
@@ -49,8 +55,10 @@ export default {
         'element-gap-md': '24px'
       },
       boxShadow: {
-        'gold-glow': '0 0 35px rgba(201, 168, 106, 0.18)',
-        'gold-glow-lg': '0 0 60px rgba(201, 168, 106, 0.28)'
+        'gold-glow': '0 0 35px rgba(188, 180, 150, 0.22)',
+        'gold-glow-lg': '0 0 60px rgba(188, 180, 150, 0.32)',
+        'brand-glow': '0 0 35px rgba(188, 180, 150, 0.22)',
+        'seal-shadow': '0 4px 18px rgba(0, 0, 0, 0.4)'
       }
     },
   },

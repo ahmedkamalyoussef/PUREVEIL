@@ -47,7 +47,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-10">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -125,12 +125,11 @@ export const AdminDashboardPage: React.FC = () => {
                   <td className="py-3.5 px-4 font-mono text-on-surface font-bold">{Number(order.total).toFixed(3)} KWD</td>
                   <td className="py-3.5 px-4 text-on-surface-variant">{order.payment_method || 'N/A'}</td>
                   <td className="py-3.5 px-4">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                      order.status === 'delivered' ? 'bg-emerald-500/20 text-emerald-400' :
-                      order.status === 'shipped' ? 'bg-blue-500/20 text-blue-400' :
-                      order.status === 'processing' ? 'bg-amber-500/20 text-amber-400' :
-                      'bg-gray-500/20 text-gray-400'
-                    }`}>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${order.status === 'delivered' ? 'bg-emerald-500/20 text-emerald-400' :
+                        order.status === 'shipped' ? 'bg-blue-500/20 text-blue-400' :
+                          order.status === 'processing' ? 'bg-amber-500/20 text-amber-400' :
+                            'bg-gray-500/20 text-gray-400'
+                      }`}>
                       {order.status}
                     </span>
                   </td>

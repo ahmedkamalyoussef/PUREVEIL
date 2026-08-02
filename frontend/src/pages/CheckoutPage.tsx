@@ -107,10 +107,10 @@ export const CheckoutPage: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        
+
         {/* Form Fields */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           {/* Personal Info */}
           <div className="glass-panel-gold rounded-3xl p-6 md:p-8 space-y-4">
             <h3 className="font-serif text-xl font-bold text-on-surface flex items-center gap-2">
@@ -194,9 +194,8 @@ export const CheckoutPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <label
                 onClick={() => setPaymentMethod('knet')}
-                className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${
-                  paymentMethod === 'knet' ? 'bg-primary/10 border-primary shadow-gold-glow' : 'bg-secondary-bg/50 border-outline-variant/20'
-                }`}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${paymentMethod === 'knet' ? 'bg-primary/10 border-primary shadow-gold-glow' : 'bg-secondary-bg/50 border-outline-variant/20'
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-on-surface">KNET (كي نت)</span>
@@ -207,9 +206,8 @@ export const CheckoutPage: React.FC = () => {
 
               <label
                 onClick={() => setPaymentMethod('card')}
-                className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${
-                  paymentMethod === 'card' ? 'bg-primary/10 border-primary shadow-gold-glow' : 'bg-secondary-bg/50 border-outline-variant/20'
-                }`}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${paymentMethod === 'card' ? 'bg-primary/10 border-primary shadow-gold-glow' : 'bg-secondary-bg/50 border-outline-variant/20'
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-on-surface">Visa / MasterCard</span>
@@ -220,9 +218,8 @@ export const CheckoutPage: React.FC = () => {
 
               <label
                 onClick={() => setPaymentMethod('cod')}
-                className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${
-                  paymentMethod === 'cod' ? 'bg-primary/10 border-primary shadow-gold-glow' : 'bg-secondary-bg/50 border-outline-variant/20'
-                }`}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${paymentMethod === 'cod' ? 'bg-primary/10 border-primary shadow-gold-glow' : 'bg-secondary-bg/50 border-outline-variant/20'
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-on-surface">{t('الدفع عند الاستلام', 'Cash on Delivery')}</span>

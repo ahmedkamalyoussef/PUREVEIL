@@ -29,27 +29,27 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onDismiss }) => {
   const typeConfig = {
     success: {
       icon: CheckCircle2,
-      border: 'border-primary/40 bg-surface-container-high/90 text-on-surface shadow-gold-glow',
-      iconColor: 'text-primary',
-      bar: 'bg-primary',
+      border: 'border-success/40 bg-surface-container-high/95 text-on-surface shadow-xl',
+      iconColor: 'text-success',
+      bar: 'bg-success',
     },
     error: {
       icon: AlertCircle,
-      border: 'border-red-500/40 bg-red-950/80 text-red-300',
-      iconColor: 'text-red-400',
-      bar: 'bg-red-400',
+      border: 'border-error/40 bg-surface-container-high/95 text-on-surface shadow-xl',
+      iconColor: 'text-error',
+      bar: 'bg-error',
     },
     warning: {
       icon: AlertTriangle,
-      border: 'border-amber-500/40 bg-amber-950/80 text-amber-300',
-      iconColor: 'text-amber-400',
-      bar: 'bg-amber-400',
+      border: 'border-warning/40 bg-surface-container-high/95 text-on-surface shadow-xl',
+      iconColor: 'text-warning',
+      bar: 'bg-warning',
     },
     info: {
       icon: Info,
-      border: 'border-primary/40 bg-background/90 text-on-surface',
-      iconColor: 'text-primary',
-      bar: 'bg-primary',
+      border: 'border-info/40 bg-surface-container-high/95 text-on-surface shadow-xl',
+      iconColor: 'text-info',
+      bar: 'bg-info',
     },
   };
 

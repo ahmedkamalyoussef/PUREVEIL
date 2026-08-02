@@ -96,9 +96,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-2 ${
-            dragOver ? 'border-primary bg-primary/10 scale-102' : 'border-outline-variant/30 bg-secondary-bg/40 hover:border-primary/60 hover:bg-secondary-bg/80'
-          }`}
+          className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-2 ${dragOver ? 'border-primary bg-primary/10 scale-102' : 'border-outline-variant/30 bg-secondary-bg/40 hover:border-primary/60 hover:bg-secondary-bg/80'
+            }`}
         >
           <input
             type="file"

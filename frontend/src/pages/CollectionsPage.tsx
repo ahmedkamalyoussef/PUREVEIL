@@ -27,7 +27,7 @@ export const CollectionsPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-gutter pt-32 pb-24 space-y-16">
+    <div className="max-w-[1440px] mx-auto px-3 sm:px-gutter pt-24 sm:pt-32 pb-16 sm:pb-24 space-y-10 sm:space-y-16">
       
       {/* Hero Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -64,12 +64,12 @@ export const CollectionsPage: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/catalog?category=${encodeURIComponent(cat.name)}`}
-              className="group relative h-96 rounded-3xl overflow-hidden glass-panel-gold border border-outline-variant/20 hover:border-primary/60 transition-all duration-500 flex flex-col justify-end p-8 shadow-xl"
+              className="group relative h-56 sm:h-96 rounded-2xl sm:rounded-3xl overflow-hidden glass-panel-gold border border-outline-variant/20 hover:border-primary/60 transition-all duration-500 flex flex-col justify-end p-4 sm:p-8 shadow-xl"
             >
               {cat.image ? (
                 <SafeImage

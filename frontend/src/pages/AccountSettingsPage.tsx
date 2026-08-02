@@ -74,7 +74,7 @@ export const AccountSettingsPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-gutter pt-32 pb-20 space-y-10">
-      
+
       {/* Header */}
       <div className="border-b border-outline-variant/20 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -95,7 +95,7 @@ export const AccountSettingsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
+
         {/* Profile Info Form */}
         <div className="glass-panel-gold rounded-3xl p-6 md:p-8 space-y-6">
           <div className="flex items-center gap-3 border-b border-outline-variant/10 pb-4">

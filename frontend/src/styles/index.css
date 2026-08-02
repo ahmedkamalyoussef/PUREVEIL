@@ -3,75 +3,90 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    height: 0px;
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
   body {
-    background-color: #0D0E0E;
-    color: #F5F2EA;
+    background-color: #242A23;
+    color: #B8B094;
     font-family: 'Inter', 'Manrope', sans-serif;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Cormorant Garamond', 'Noto Serif Arabic', serif;
+    color: #C8C0A4;
   }
 }
 
-/* Glassmorphism Panels with Warm Bronze & Champagne Gold hints */
+/* Glassmorphism Panels with Rich Deep Olive & Warm Beige */
 .glass-panel {
-  background: rgba(28, 31, 29, 0.65);
+  background: #20251E;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(61, 56, 43, 0.4);
+  border: 1px solid #494736;
 }
 
-.glass-panel-gold {
-  background: rgba(22, 24, 23, 0.75);
+.glass-panel-gold,
+.glass-panel-brand {
+  background: #20251E;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(201, 168, 106, 0.22);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(201, 168, 106, 0.06);
+  border: 1px solid #494736;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* Luxury Warm Gold Gradients */
-.gold-gradient-text {
-  background: linear-gradient(135deg, #F5F2EA 0%, #C9A86A 55%, #8C7F67 100%);
+/* Luxury Brand Text and Background Styles — 100% Pure Sand Beige Spectrum */
+.gold-gradient-text,
+.brand-gradient-text {
+  background: linear-gradient(135deg, #D4CCB0 0%, #BCB496 55%, #A1997F 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.gold-gradient-bg {
-  background: linear-gradient(135deg, #C9A86A 0%, #B89753 100%);
+.gold-gradient-bg,
+.brand-gradient-bg {
+  background: linear-gradient(135deg, #BCB496 0%, #A1997F 100%);
+  color: #20251E;
 }
 
-.dark-luxury-gradient {
-  background: linear-gradient(135deg, #0D0E0E 0%, #161817 40%, #1E241E 75%, #0D0E0E 100%);
-}
-
-/* Custom Luxury Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0D0E0E;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #3D382B;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #C9A86A;
-}
-
-/* Golden Aura Animation on Product Cards */
 .gold-aura {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.gold-aura:hover {
-  box-shadow: 0 12px 40px -10px rgba(201, 168, 106, 0.25);
-  border-color: rgba(201, 168, 106, 0.5);
+.gold-aura::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(188, 180, 150, 0.35), transparent 60%, rgba(161, 153, 127, 0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Instagram, Twitter, Facebook, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Twitter, Facebook, Sparkles, MessageSquare } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { getImageUrl } from '../utils/imageUrl';
@@ -18,11 +18,13 @@ export const Footer: React.FC = () => {
     <footer className="bg-surface-container-lowest border-t border-outline-variant/15 pt-16 pb-12 font-sans text-on-surface-variant">
       <div className="max-w-[1440px] mx-auto px-4 md:px-gutter space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          
+
           {/* Brand Col */}
           <div className="space-y-4 md:col-span-1">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={storeLogo} alt={storeName} className="h-8 w-auto filter drop-shadow-[0_0_8px_rgba(201,168,106,0.4)]" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-full bg-surface-container-high/90 border border-primary/40 p-1.5 flex items-center justify-center shadow-seal-shadow group-hover:border-primary group-hover:scale-105 transition-all duration-300 shrink-0">
+                <img src={storeLogo} alt={storeName} className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(161,153,127,0.4)]" />
+              </div>
               <span className="font-serif text-2xl font-bold gold-gradient-text">{storeName}</span>
             </Link>
             <p className="text-xs text-muted leading-relaxed">
@@ -31,23 +33,25 @@ export const Footer: React.FC = () => {
                 'PURE VEIL — House of Luxury Fragrances & Oud. Crafting exquisite oriental and French perfumes presented in royal bottles.'
               )}
             </p>
-            <div className="flex gap-3 pt-2">
-              {settings.instagramUrl && settings.instagramUrl !== '#' && (
-                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors">
-                  <Instagram className="w-4 h-4" />
-                </a>
-              )}
-              {settings.twitterUrl && settings.twitterUrl !== '#' && (
-                <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors">
-                  <Twitter className="w-4 h-4" />
-                </a>
-              )}
-              {settings.facebookUrl && settings.facebookUrl !== '#' && (
-                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors">
-                  <Facebook className="w-4 h-4" />
-                </a>
-              )}
-            </div>
+            {settings.showSocialLinks !== false && (
+              <div className="flex gap-3 pt-2">
+                {settings.showInstagram !== false && settings.instagramUrl && settings.instagramUrl !== '#' && (
+                  <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors" title="Instagram">
+                    <Instagram className="w-4 h-4" />
+                  </a>
+                )}
+                {settings.showTwitter !== false && settings.twitterUrl && settings.twitterUrl !== '#' && (
+                  <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors" title="Twitter / X">
+                    <Twitter className="w-4 h-4" />
+                  </a>
+                )}
+                {settings.showFacebook !== false && settings.facebookUrl && settings.facebookUrl !== '#' && (
+                  <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary-bg hover:text-primary transition-colors" title="Facebook">
+                    <Facebook className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Quick Links */}
@@ -76,19 +80,38 @@ export const Footer: React.FC = () => {
           {/* Contact Details */}
           <div className="space-y-3 text-xs">
             <h4 className="font-serif text-sm font-bold text-on-surface uppercase tracking-wider">{t('تواصل معنا', 'Contact Us')}</h4>
-            <div className="space-y-2 text-muted">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary shrink-0" />
-                <span>{storeAddress}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-primary shrink-0" />
-                <span className="font-mono">{settings.supportPhone}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-primary shrink-0" />
-                <span className="font-mono">{settings.supportEmail}</span>
-              </div>
+            <div className="space-y-2.5 text-muted">
+              {settings.showAddress !== false && storeAddress && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary shrink-0" />
+                  <span>{storeAddress}</span>
+                </div>
+              )}
+              {settings.showPhone !== false && settings.supportPhone && (
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-primary shrink-0" />
+                  <a href={`tel:${settings.supportPhone}`} className="font-mono hover:text-primary transition-colors">{settings.supportPhone}</a>
+                </div>
+              )}
+              {settings.showWhatsapp !== false && (settings.whatsapp || settings.supportPhone) && (
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <a
+                    href={`https://wa.me/${(settings.whatsapp || settings.supportPhone || '').replace(/[^0-9]/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono hover:text-emerald-400 transition-colors dir-ltr"
+                  >
+                    {settings.whatsapp || settings.supportPhone} (WhatsApp)
+                  </a>
+                </div>
+              )}
+              {settings.showEmail !== false && settings.supportEmail && (
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-primary shrink-0" />
+                  <a href={`mailto:${settings.supportEmail}`} className="font-mono hover:text-primary transition-colors">{settings.supportEmail}</a>
+                </div>
+              )}
             </div>
           </div>
 

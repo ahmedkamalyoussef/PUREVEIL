@@ -12,7 +12,7 @@ export const FavoritesPage: React.FC = () => {
   const { favorites, loading } = useFavorites();
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-gutter pt-32 pb-24 space-y-12">
+    <div className="max-w-[1440px] mx-auto px-3 sm:px-gutter pt-24 sm:pt-32 pb-16 sm:pb-24 space-y-8 sm:space-y-12">
       
       {/* Header */}
       <div className="border-b border-outline-variant/20 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -52,9 +52,9 @@ export const FavoritesPage: React.FC = () => {
           </Link>
         </div>
       ) : loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="glass-panel rounded-3xl h-[420px] animate-pulse bg-secondary-bg/30" />
+            <div key={i} className="glass-panel rounded-2xl h-[280px] sm:h-[420px] animate-pulse bg-secondary-bg/30" />
           ))}
         </div>
       ) : favorites.length === 0 ? (
@@ -79,7 +79,7 @@ export const FavoritesPage: React.FC = () => {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
           {favorites.map(product => (
             <ProductCard
               key={product.id}

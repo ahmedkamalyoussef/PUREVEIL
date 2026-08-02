@@ -127,7 +127,8 @@ export const AdminUsersPage: React.FC = () => {
           <div className="py-12 text-center text-xs text-muted">{t('لا يوجد مستخدمين مطبقين', 'No users found')}</div>
         ) : (
           <>
-            <div className="overflow-x-auto rounded-2xl border border-outline-variant/15">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto rounded-2xl border border-outline-variant/15">
               <table className="w-full text-right text-xs font-sans">
                 <thead className="bg-secondary-bg/80 text-muted uppercase text-[10px] border-b border-outline-variant/15">
                   <tr>
@@ -150,9 +151,8 @@ export const AdminUsersPage: React.FC = () => {
                       <td className="py-3.5 px-4 text-muted font-mono">{u.email}</td>
                       <td className="py-3.5 px-4 text-muted font-mono">{u.phone || '—'}</td>
                       <td className="py-3.5 px-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 w-fit ${
-                          u.role === 'admin' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary-bg text-muted border border-outline-variant/20'
-                        }`}>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 w-fit ${u.role === 'admin' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary-bg text-muted border border-outline-variant/20'
+                          }`}>
                           {u.role === 'admin' ? <Shield className="w-3 h-3" /> : <UserCheck className="w-3 h-3" />}
                           <span>{u.role}</span>
                         </span>
@@ -177,6 +177,43 @@ export const AdminUsersPage: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Responsive Cards View */}
+            <div className="md:hidden space-y-3">
+              {users.map(u => (
+                <div key={u.id} className="p-4 bg-secondary-bg/40 border border-outline-variant/20 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+                        <UserIcon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-on-surface text-sm">{u.name}</div>
+                        <div className="text-xs text-muted font-mono">{u.email}</div>
+                      </div>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 ${u.role === 'admin' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary-bg text-muted border border-outline-variant/20'}`}>
+                      {u.role}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-outline-variant/15 text-xs">
+                    <button
+                      onClick={() => handleRoleToggle(u)}
+                      className="px-3 py-1.5 bg-secondary-bg hover:bg-primary/20 hover:text-primary rounded-xl transition-colors text-xs font-bold border border-outline-variant/20"
+                    >
+                      {u.role === 'admin' ? t('تخفيض إلى زبون', 'Demote to Customer') : t('ترقية إلى أدمن', 'Promote to Admin')}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(u.id, u.name)}
+                      className="p-1.5 text-error hover:bg-error/10 rounded-xl transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <Pagination

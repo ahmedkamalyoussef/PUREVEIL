@@ -55,7 +55,7 @@ export const AdminSettingsPage: React.FC = () => {
         </div>
       ) : (
         <form onSubmit={handleSave} className="glass-panel-gold rounded-3xl p-6 md:p-8 space-y-8">
-          
+
           {/* Section 1: Logo & Branding Images Upload (Multer) */}
           <div className="space-y-4">
             <h3 className="font-serif text-lg font-bold text-on-surface flex items-center gap-2 border-b border-outline-variant/15 pb-2">
@@ -125,10 +125,21 @@ export const AdminSettingsPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <Mail className="w-4 h-4 text-primary" />
-                  <span>{t('البريد الإلكتروني للدعم', 'Support Email')}</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <Mail className="w-4 h-4 text-primary" />
+                    <span>{t('البريد الإلكتروني للدعم', 'Support Email')}</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-primary/90 font-medium cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showEmail !== false}
+                      onChange={(e) => setForm({ ...form, showEmail: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار بالفوتر', 'Show in Footer')}</span>
+                  </label>
+                </div>
                 <input
                   type="email"
                   required
@@ -139,10 +150,21 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <Phone className="w-4 h-4 text-primary" />
-                  <span>{t('رقم الهاتف للتواصل', 'Support Phone')}</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <Phone className="w-4 h-4 text-primary" />
+                    <span>{t('رقم الهاتف للتواصل', 'Support Phone')}</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-primary/90 font-medium cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showPhone !== false}
+                      onChange={(e) => setForm({ ...form, showPhone: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار بالفوتر', 'Show in Footer')}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   required
@@ -153,14 +175,26 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <MessageSquare className="w-4 h-4 text-emerald-400" />
-                  <span>{t('رقم الواتساب (WhatsApp)', 'WhatsApp Phone Number')}</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <MessageSquare className="w-4 h-4 text-emerald-400" />
+                    <span>{t('رقم الواتساب (WhatsApp)', 'WhatsApp Number')}</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-primary/90 font-medium cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showWhatsapp !== false}
+                      onChange={(e) => setForm({ ...form, showWhatsapp: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار بالفوتر', 'Show in Footer')}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={form.whatsapp || ''}
                   onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+                  placeholder="+965 2200 8800"
                   className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-4 py-3 text-xs text-on-surface focus:outline-none focus:border-primary font-mono"
                 />
               </div>
@@ -168,10 +202,21 @@ export const AdminSettingsPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-primary" />
-                  <span>{t('عنوان الفرع الرئيسي (بالعربية)', 'Headquarters Address (Arabic)')}</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-primary" />
+                    <span>{t('عنوان الفرع الرئيسي (بالعربية)', 'Headquarters Address (Arabic)')}</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-primary/90 font-medium cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showAddress !== false}
+                      onChange={(e) => setForm({ ...form, showAddress: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار بالفوتر', 'Show in Footer')}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   required
@@ -198,17 +243,39 @@ export const AdminSettingsPage: React.FC = () => {
 
           {/* Section 4: Social Media Links */}
           <div className="space-y-4">
-            <h3 className="font-serif text-lg font-bold text-on-surface flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-              <Instagram className="w-5 h-5 text-primary" />
-              <span>{t('روابط التواصل الاجتماعي', 'Social Media Links')}</span>
-            </h3>
+            <div className="flex items-center justify-between border-b border-outline-variant/15 pb-2">
+              <h3 className="font-serif text-lg font-bold text-on-surface flex items-center gap-2">
+                <Instagram className="w-5 h-5 text-primary" />
+                <span>{t('روابط التواصل الاجتماعي', 'Social Media Links')}</span>
+              </h3>
+              <label className="inline-flex items-center gap-1.5 text-xs text-primary font-bold cursor-pointer bg-primary/10 border border-primary/30 px-3 py-1 rounded-full">
+                <input
+                  type="checkbox"
+                  checked={form.showSocialLinks !== false}
+                  onChange={(e) => setForm({ ...form, showSocialLinks: e.target.checked })}
+                  className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                />
+                <span>{t('إظهار قسم منصات التواصل بالفوتر', 'Show Social Links in Footer')}</span>
+              </label>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <Instagram className="w-4 h-4 text-pink-400" />
-                  <span>Instagram</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <Instagram className="w-4 h-4 text-pink-400" />
+                    <span>Instagram</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showInstagram !== false}
+                      onChange={(e) => setForm({ ...form, showInstagram: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار', 'Show')}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={form.instagramUrl || ''}
@@ -219,10 +286,21 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <Twitter className="w-4 h-4 text-sky-400" />
-                  <span>Twitter / X</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <Twitter className="w-4 h-4 text-sky-400" />
+                    <span>Twitter / X</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showTwitter !== false}
+                      onChange={(e) => setForm({ ...form, showTwitter: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار', 'Show')}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={form.twitterUrl || ''}
@@ -233,10 +311,21 @@ export const AdminSettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 flex items-center gap-1.5">
-                  <Facebook className="w-4 h-4 text-blue-500" />
-                  <span>Facebook</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5">
+                    <Facebook className="w-4 h-4 text-blue-500" />
+                    <span>Facebook</span>
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.showFacebook !== false}
+                      onChange={(e) => setForm({ ...form, showFacebook: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded border-outline-variant/40 bg-secondary-bg text-primary focus:ring-primary accent-primary"
+                    />
+                    <span>{t('إظهار', 'Show')}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={form.facebookUrl || ''}

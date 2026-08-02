@@ -1,233 +1,332 @@
-````text id="a8pq5n"
-# Implement Authentication, Admin Panel, User Account Management, Favorites, and Database Integration
+# Rebuild the Entire PURE VEIL Theme Using These Exact Brand Colors
 
-Continue building the project into a production-ready application.
+The current implementation is incorrect.
 
-The database connection credentials have already been added to the `.env` file:
+Do NOT use black and gold.
 
-```env
-DB_NAME=PUREVEIL
-DB_USER=root
-DB_PASS=41468158
-DB_HOST=localhost
-DB_PORT=3306
-```
+Do NOT approximate the colors.
 
-Use MySQL as the database for all persistence instead of temporary or mock storage.
+Use ONLY the following brand palette throughout the entire application.
+
+## Official Brand Colors
+
+Primary Beige
+#A1997F
+
+Primary Dark Olive
+#201E17
+
+Dark Surface
+#181C19
+
+Secondary Olive
+#494736
+
+Light Olive Surface
+#242A23
+
+These colors define the entire brand identity.
+
+Create lighter and darker shades ONLY from these colors when necessary.
+
+Do not introduce unrelated colors.
 
 ---
 
-# 1. Connect the Entire Application to the Database
+# Design Philosophy
 
-Replace any remaining mock state, local storage, in-memory data, or temporary data with real database integration.
+The website should feel like a luxury perfume boutique.
 
-Review every feature and connect it to MySQL.
+Elegant.
 
-This includes:
+Warm.
 
+Minimal.
+
+Premium.
+
+Sophisticated.
+
+The interface should immediately resemble the PURE VEIL logo.
+
+---
+
+# Theme Tokens
+
+Create a centralized design system.
+
+Example:
+
+Primary: #201E17
+
+Primary Hover: slightly lighter version
+
+Secondary: #494736
+
+Accent: #A1997F
+
+Accent Hover: slightly lighter version
+
+Background: very light tint derived from #A1997F
+
+Surface: #242A23
+
+Card Surface: light warm beige derived from #A1997F
+
+Border: muted olive
+
+Text Primary: #201E17
+
+Text Secondary: #494736
+
+Dark Background: #181C19
+
+Do NOT hardcode colors inside components.
+
+Everything must use theme variables/design tokens.
+
+---
+
+# Apply the New Theme Everywhere
+
+Update every screen without exception.
+
+Including:
+
+- Landing Page
+- Hero
+- Navbar
+- Mobile Navigation
+- Footer
+- Collections
+- Categories
+- Product Cards
+- Product Details
+- Search
+- Favorites
+- Cart
+- Checkout
+- User Dashboard
 - Authentication
-- User Profiles
-- Suppliers
-- Favorites
-- Categories
-- Products/Services
-- Contact Information
-- Branches
-- Working Hours
-- Documents
-- Verification Status
-- Dashboard Data
-- Any other entity currently using mock data
+- Admin Dashboard
+- Orders
+- Products Management
+- Categories Management
+- Collections Management
+- Store Settings
+- Tables
+- Forms
+- Pagination
+- Dropdowns
+- Modals
+- Toasts
+- Alerts
+- Empty States
+- Skeleton Loaders
+- Loading Indicators
 
-If some backend endpoints are missing, implement them.
-
----
-
-# 2. Seed Mock Data into the Database
-
-Populate the database with realistic seed data.
-
-Create enough sample data to properly test the application.
-
-Include:
-
-- Admin account
-- Multiple supplier accounts
-- Regular user accounts
-- Categories
-- Suppliers
-- Products
-- Services
-- Favorites
-- Branches
-- Reviews (if supported)
-- Verification statuses
-- Images/placeholders where applicable
-
-The frontend should load this seeded data through the API rather than using hardcoded values.
+No page should retain the previous theme.
 
 ---
 
-# 3. Create a Protected Admin Panel
+# Backgrounds
 
-Build a dedicated Admin Panel that is completely separate from the public website.
+Avoid large black backgrounds.
 
-Requirements:
+Instead:
 
-- Accessible only to authenticated administrators.
-- Prevent normal users from accessing admin routes.
-- Redirect unauthorized users appropriately.
-- Protect both frontend routes and backend APIs.
+Use soft beige backgrounds derived from #A1997F.
 
-Create a clean admin layout with its own navigation.
+Alternate sections using light olive tones derived from:
 
-At a minimum, include management pages for:
+#242A23
 
-- Dashboard
-- Users
-- Suppliers
-- Categories
-- Products / Services
-- Favorites (if applicable)
-- Business Verification
-- Uploaded Documents
-- Branches
-- Reports (placeholder if not yet implemented)
-- Settings
+and
 
-Design the admin panel using the existing design system.
+#494736.
+
+Dark sections should use:
+
+#181C19
+
+instead of pure black.
 
 ---
 
-# 4. Role-Based Authentication & Authorization
+# Buttons
 
-Implement proper role-based access control.
+Primary Buttons
 
-Support roles such as:
+Background:
 
-- Admin
-- Supplier
-- User
+#201E17
 
-Ensure:
+Text:
 
-- Protected routes.
-- Protected API endpoints.
-- Role validation.
-- Secure authorization middleware.
-- Proper redirects.
+#A1997F
 
----
+Hover:
 
-# 5. Favorites Page
+slightly lighter olive.
 
-A Favorites page is currently missing.
+Secondary Buttons
 
-Create a complete Favorites page.
+Background:
 
-Requirements:
+#A1997F
 
-Users should be able to:
+Text:
 
-- View all favorite suppliers.
-- Remove suppliers from favorites.
-- Navigate to supplier profiles.
-- Display an empty state when there are no favorites.
-- Load data from the database.
+#201E17
 
-Ensure this page is fully responsive and localized.
+Hover:
+
+slightly darker beige.
+
+No yellow.
+
+No gold.
+
+No orange.
 
 ---
 
-# 6. Login & Registration
+# Cards
 
-Complete the authentication flow.
+Cards should use:
 
-Registration should:
+Warm beige backgrounds.
 
-- Create a user in the database.
-- Validate all fields.
-- Prevent duplicate email addresses.
-- Hash passwords securely.
-- Return proper validation messages.
+Soft olive borders.
 
-Login should:
+Very subtle shadows.
 
-- Authenticate against the database.
-- Generate the project's existing authentication token/session.
-- Redirect according to the user's role.
-- Display localized error messages.
+Elegant hover animations.
+
+Do not use black cards.
 
 ---
 
-# 7. User Account Settings
+# Navigation
 
-Allow users to edit their account information.
+Navbar and Footer should primarily use:
 
-Support updating:
+#201E17
 
-- Full Name
-- Password
+Active items:
 
-Password updates should:
+#A1997F
 
-- Require validation.
-- Confirm the new password.
-- Store hashed passwords only.
-- Follow existing security rules.
+Hover states should transition smoothly between the official brand colors.
 
 ---
 
-# 8. API Review
+# Forms
 
-Review every API endpoint.
+Inputs should use:
 
-Ensure:
+Light beige backgrounds.
 
-- Proper validation.
-- Proper status codes.
-- Error handling.
-- Localization compatibility.
-- Consistent response format.
-- No remaining mock endpoints.
+Olive borders.
 
----
+Focus state:
 
-# 9. Localization
+#A1997F
 
-All newly added pages, forms, buttons, validation messages, labels, and notifications must support:
+Placeholder:
 
-- English
-- Arabic
-
-No hardcoded strings should remain.
+muted olive.
 
 ---
 
-# 10. Responsive Design
+# Product Cards
 
-Ensure every newly created page is fully responsive.
+Product cards should:
 
-Review layouts for:
+Use warm backgrounds.
 
-- Mobile
-- Tablet
-- Desktop
+Olive borders.
 
-The mobile experience should feel like a native application.
+Beige typography.
+
+Premium hover animations.
+
+Favorite button, badges, and actions should match the new palette.
+
+---
+
+# Admin Dashboard
+
+Apply exactly the same branding.
+
+The admin panel should not have a separate visual identity.
+
+Sidebar:
+
+#201E17
+
+Cards:
+
+warm beige
+
+Buttons:
+
+olive and beige
+
+Tables:
+
+matching the same palette.
+
+---
+
+# Icons
+
+Icons should use only:
+
+#201E17
+
+#494736
+
+#A1997F
+
+No blue or yellow icons except for semantic status indicators.
+
+---
+
+# Gradients
+
+If gradients are used, they must be created ONLY from:
+
+#A1997F
+
+#494736
+
+#242A23
+
+Never introduce black gradients.
+
+---
+
+# Final Audit
+
+Before considering the task complete:
+
+Review every page and every reusable component.
+
+Ensure there is not a single remaining instance of the old black and gold theme.
+
+The storefront and admin dashboard should feel like one cohesive luxury brand built entirely around the official PURE VEIL palette.
 
 ---
 
 # Technical Requirements
 
-- Use the existing MySQL connection from the `.env` file.
-- Remove reliance on mock storage wherever backend support exists.
-- Seed the database with realistic sample data for development.
-- Reuse existing components whenever possible.
-- Preserve the current design system.
-- Maintain Clean Architecture.
-- Keep the code modular and reusable.
-- Preserve existing functionality.
-- Follow the project's coding standards.
-- Deliver a production-ready implementation where authentication, authorization, admin features, favorites, and user account management are fully integrated with the MySQL database.
-````
+- Use the exact HEX colors provided above as the foundation of the design system.
+- Generate all lighter and darker shades from these colors only.
+- Centralize all colors into reusable theme variables/design tokens.
+- Remove hardcoded colors throughout the project.
+- Preserve existing layouts and functionality.
+- Maintain full RTL/LTR support.
+- Ensure WCAG-compliant contrast where possible.
+- Follow Clean Architecture and the existing design system.
+- Deliver a complete, production-ready visual redesign where the entire application consistently reflects the official PURE VEIL olive and beige brand identity.

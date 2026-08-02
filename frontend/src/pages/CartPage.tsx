@@ -52,7 +52,7 @@ export const CartPage: React.FC = () => {
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-gutter pt-32 pb-24 space-y-12">
-      
+
       {/* Header */}
       <div className="border-b border-outline-variant/20 pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
@@ -97,10 +97,10 @@ export const CartPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
+
           {/* Cart Items List */}
           <div className="lg:col-span-2 space-y-4">
-            
+
             {/* Free Shipping Progress */}
             <div className="glass-panel-gold rounded-2xl p-5 space-y-2">
               <div className="flex justify-between items-center text-xs">

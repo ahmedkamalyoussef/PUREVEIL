@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, ShoppingBag, ArrowLeft, ArrowRight, Award, Shield, Sparkles, Heart, ShieldCheck, Clock } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, ArrowRight, Award, Shield, Sparkles, Heart, ShieldCheck, Clock } from 'lucide-react';
 import { Product } from '../types';
 import { fetchProductById, fetchProducts } from '../services/apiService';
 import { useCart } from '../contexts/CartContext';
@@ -81,8 +81,8 @@ export const ProductDetailPage: React.FC = () => {
   const displayHighlights = (lang === 'en' && product.highlightsEn && product.highlightsEn.length > 0) ? product.highlightsEn : product.highlights;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-gutter pt-28 pb-24 space-y-20">
-      
+    <div className="max-w-[1440px] mx-auto px-3 sm:px-gutter pt-24 sm:pt-28 pb-16 sm:pb-24 space-y-10 sm:space-y-20">
+
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-muted font-sans pt-4">
         <Link to="/" className="hover:text-primary transition-colors">{t('الرئيسية', 'Home')}</Link>
@@ -94,17 +94,17 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Main Grid Showcase */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-        
+
         {/* Left Image Showcase */}
-        <div className="glass-panel-gold rounded-3xl p-8 relative gold-aura overflow-hidden flex items-center justify-center min-h-[450px]">
-          <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+        <div className="glass-panel-gold rounded-3xl relative gold-aura overflow-hidden shadow-xl border border-outline-variant/30 w-full">
+          <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
             {product.isNew && (
-              <span className="px-3 py-1 bg-primary text-on-primary text-xs font-bold rounded-full uppercase">
+              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-primary text-on-primary text-[10px] sm:text-xs font-bold rounded-full uppercase shadow-md">
                 {t('جديد', 'NEW')}
               </span>
             )}
             {product.featured && (
-              <span className="px-3 py-1 bg-secondary-bg text-primary border border-primary/30 text-xs font-bold rounded-full uppercase">
+              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-secondary-bg text-primary border border-primary/30 text-[10px] sm:text-xs font-bold rounded-full uppercase shadow-md">
                 {t('حصري', 'EXCLUSIVE')}
               </span>
             )}
@@ -113,33 +113,29 @@ export const ProductDetailPage: React.FC = () => {
           <SafeImage
             src={product.image}
             alt={displayName}
-            className="max-h-[480px] w-auto object-contain filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.7)] hover:scale-105 transition-transform duration-500"
+            className="w-full h-auto max-h-[550px] object-cover rounded-3xl hover:scale-105 transition-transform duration-500"
           />
         </div>
 
         {/* Right Product Details */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div>
-            <span className="text-xs uppercase tracking-widest text-primary font-bold block mb-1">
+            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-primary font-bold block mb-1">
               {displayCategory}
             </span>
-            <h1 className="font-serif text-3xl md:text-5xl font-bold text-on-surface leading-tight">
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold text-on-surface leading-tight">
               {displayName}
             </h1>
           </div>
 
-          {/* Rating & Concentration */}
-          <div className="flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-1 text-primary">
-              <Star className="w-4 h-4 fill-primary" />
-              <span className="font-bold text-sm">{product.rating}</span>
-              <span className="text-muted font-normal">({product.reviewsCount} {t('تقييم', 'reviews')})</span>
+          {/* Concentration Badge */}
+          {product.concentration && (
+            <div className="flex items-center gap-2 text-xs">
+              <span className="px-3 py-1 bg-secondary-bg text-primary rounded-full font-bold border border-primary/20">
+                {product.concentration}
+              </span>
             </div>
-            <span className="text-muted">•</span>
-            <span className="px-3 py-1 bg-secondary-bg text-primary rounded-full font-bold border border-primary/20">
-              {product.concentration}
-            </span>
-          </div>
+          )}
 
           {/* Dynamic Price Display according to selected size */}
           <div className="flex items-baseline gap-3 pt-2">
@@ -172,11 +168,10 @@ export const ProductDetailPage: React.FC = () => {
                   <button
                     key={vol.size}
                     onClick={() => setSelectedSize(vol.size)}
-                    className={`px-5 py-3 rounded-2xl text-xs font-mono transition-all flex flex-col items-center justify-center min-w-[90px] border ${
-                      selectedSize === vol.size
+                    className={`px-5 py-3 rounded-2xl text-xs font-mono transition-all flex flex-col items-center justify-center min-w-[90px] border ${selectedSize === vol.size
                         ? 'bg-primary text-on-primary font-bold shadow-gold-glow border-primary scale-105'
                         : 'bg-secondary-bg/80 text-on-surface-variant hover:text-on-surface border-outline-variant/30 hover:border-primary/50'
-                    }`}
+                      }`}
                   >
                     <span className="text-sm font-bold">{vol.size}</span>
                     <span className="text-[10px] opacity-80 mt-0.5">{vol.price.toFixed(3)} KWD</span>
@@ -216,14 +211,13 @@ export const ProductDetailPage: React.FC = () => {
 
             <button
               onClick={() => toggleFavorite(product)}
-              className={`p-4 rounded-xl border transition-all shadow-md flex items-center justify-center ${
-                isFavorite(product.id)
-                  ? 'bg-red-500/20 border-red-500/50 text-red-500 hover:bg-red-500/30'
-                  : 'bg-secondary-bg border-outline-variant/30 text-on-surface-variant hover:text-red-400 hover:border-red-400/50'
-              }`}
+              className={`p-4 rounded-xl border transition-all shadow-md flex items-center justify-center active:scale-95 ${isFavorite(product.id)
+                  ? 'bg-favorite/15 border-favorite/40 text-favorite hover:bg-favorite/25'
+                  : 'bg-secondary-bg border-outline-variant/30 text-on-surface-variant hover:text-favorite hover:border-favorite/40'
+                }`}
               title={isFavorite(product.id) ? t('إزالة من المفضلة', 'Remove from favorites') : t('إضافة للمفضلة', 'Add to favorites')}
             >
-              <Heart className={`w-5 h-5 ${isFavorite(product.id) ? 'fill-red-500' : ''}`} />
+              <Heart className={`w-5 h-5 transition-transform duration-300 ${isFavorite(product.id) ? 'fill-favorite scale-110' : ''}`} />
             </button>
           </div>
 
@@ -288,7 +282,7 @@ export const ProductDetailPage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {related.map(rel => (
               <ProductCard key={rel.id} product={rel} />
             ))}

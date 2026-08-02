@@ -212,9 +212,8 @@ export const AdminCategoriesPage: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-outline-variant/15 text-xs">
-                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                  (c.status || 'active') === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-500/20 text-gray-400'
-                }`}>
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${(c.status || 'active') === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-500/20 text-gray-400'
+                  }`}>
                   {c.status || 'active'}
                 </span>
 
@@ -255,7 +254,7 @@ export const AdminCategoriesPage: React.FC = () => {
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="glass-panel-gold rounded-3xl p-6 md:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-6 relative border border-primary/30 shadow-2xl">
-            
+
             <div className="flex items-center justify-between border-b border-outline-variant/15 pb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
@@ -273,9 +272,8 @@ export const AdminCategoriesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('basic')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'basic' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
+                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${activeTab === 'basic' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
+                  }`}
               >
                 <Layers className="w-4 h-4" />
                 <span>{t('الاسم والغلاف (Multer)', 'Basic & Cover')}</span>
@@ -283,9 +281,8 @@ export const AdminCategoriesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('bilingual')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'bilingual' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
+                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${activeTab === 'bilingual' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
+                  }`}
               >
                 <Globe className="w-4 h-4" />
                 <span>{t('الوصف التوضيحي', 'Descriptions')}</span>

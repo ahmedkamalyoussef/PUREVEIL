@@ -331,11 +331,24 @@ export interface StoreSettings {
   instagramUrl?: string;
   twitterUrl?: string;
   facebookUrl?: string;
+  snapchatUrl?: string;
+  tiktokUrl?: string;
   shippingFee: number;
   freeShippingThreshold: number;
   copyrightText?: string;
   copyrightTextEn?: string;
   currency: string;
+  // Visibility Toggles
+  showPhone?: boolean;
+  showWhatsapp?: boolean;
+  showEmail?: boolean;
+  showAddress?: boolean;
+  showSocialLinks?: boolean;
+  showInstagram?: boolean;
+  showTwitter?: boolean;
+  showFacebook?: boolean;
+  showSnapchat?: boolean;
+  showTiktok?: boolean;
 }
 
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
@@ -351,26 +364,63 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   instagramUrl: '#',
   twitterUrl: '#',
   facebookUrl: '#',
+  snapchatUrl: '#',
+  tiktokUrl: '#',
   shippingFee: 2.0,
   freeShippingThreshold: 30.0,
   copyrightText: 'جميع الحقوق محفوظة.',
   copyrightTextEn: 'All rights reserved.',
   currency: 'KWD',
+  showPhone: true,
+  showWhatsapp: true,
+  showEmail: true,
+  showAddress: true,
+  showSocialLinks: true,
+  showInstagram: true,
+  showTwitter: true,
+  showFacebook: true,
+  showSnapchat: true,
+  showTiktok: true,
 };
 
 export const fetchSettingsApi = async (): Promise<StoreSettings> => {
   try {
     const response = await api.get('/settings');
-    return response.data.data;
+    const data = response.data.data;
+    if (data) {
+      localStorage.setItem('pureveil_store_settings', JSON.stringify(data));
+      return data;
+    }
+    return DEFAULT_STORE_SETTINGS;
   } catch (error) {
     console.error('Failed to fetch settings:', error);
+    const saved = localStorage.getItem('pureveil_store_settings');
+    if (saved) {
+      try {
+        return { ...DEFAULT_STORE_SETTINGS, ...JSON.parse(saved) };
+      } catch (e) {}
+    }
     return DEFAULT_STORE_SETTINGS;
   }
 };
 
 export const updateSettingsApi = async (data: Partial<StoreSettings>): Promise<StoreSettings> => {
-  const response = await api.put('/settings', data);
-  return response.data.data;
+  try {
+    const response = await api.put('/settings', data);
+    const updated = response.data.data;
+    if (updated) {
+      localStorage.setItem('pureveil_store_settings', JSON.stringify(updated));
+      return updated;
+    }
+    throw new Error('No data returned');
+  } catch (error) {
+    console.error('Failed to update settings via API, saving locally:', error);
+    const saved = localStorage.getItem('pureveil_store_settings');
+    const current = saved ? JSON.parse(saved) : DEFAULT_STORE_SETTINGS;
+    const merged = { ...current, ...data };
+    localStorage.setItem('pureveil_store_settings', JSON.stringify(merged));
+    return merged;
+  }
 };
 
 export default api;

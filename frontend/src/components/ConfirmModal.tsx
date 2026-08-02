@@ -65,7 +65,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
       <div className="glass-panel-gold rounded-3xl p-6 md:p-8 w-full max-w-md space-y-6 relative border border-primary/40 shadow-2xl animate-in zoom-in-95 duration-200">
-        
+
         <button
           onClick={onCancel}
           className="absolute top-4 right-4 p-2 text-muted hover:text-on-surface rounded-lg transition-colors"

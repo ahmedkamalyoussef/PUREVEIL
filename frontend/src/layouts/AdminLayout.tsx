@@ -34,15 +34,17 @@ export const AdminLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-on-surface flex flex-col md:flex-row">
-      
+
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-surface-container-lowest border-r border-outline-variant/15 p-6 sticky top-0 h-screen justify-between z-30">
         <div className="space-y-8">
-          
+
           {/* Admin Header / Brand */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={storeLogo} alt={storeName} className="h-8 w-auto filter drop-shadow-[0_0_8px_rgba(201,168,106,0.4)]" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-full bg-surface-container-high/90 border border-primary/40 p-1.5 flex items-center justify-center shadow-seal-shadow group-hover:border-primary group-hover:scale-105 transition-all duration-300 shrink-0">
+                <img src={storeLogo} alt={storeName} className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(161,153,127,0.4)]" />
+              </div>
               <span className="font-serif text-2xl font-bold gold-gradient-text">{storeName}</span>
             </Link>
             <div className="px-3 py-2 bg-primary/10 border border-primary/20 rounded-xl text-xs flex items-center gap-2">
@@ -60,11 +62,10 @@ export const AdminLayout: React.FC = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all ${
-                    active
+                  className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all ${active
                       ? 'bg-primary text-on-primary font-bold shadow-gold-glow'
                       : 'text-on-surface-variant hover:text-on-surface hover:bg-secondary-bg'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.label}</span>
@@ -83,7 +84,7 @@ export const AdminLayout: React.FC = () => {
             <Home className="w-4 h-4" />
             <span>{t('العودة للمتجر', 'Back to Store')}</span>
           </Link>
-          
+
           <div className="flex items-center justify-between px-3 py-2 bg-secondary-bg/50 rounded-xl">
             <div className="truncate">
               <div className="font-bold text-on-surface truncate">{user?.name}</div>
@@ -133,9 +134,8 @@ export const AdminLayout: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm ${
-                      active ? 'bg-primary text-on-primary font-bold' : 'text-on-surface-variant'
-                    }`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm ${active ? 'bg-primary text-on-primary font-bold' : 'text-on-surface-variant'
+                      }`}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.label}</span>

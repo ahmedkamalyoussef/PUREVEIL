@@ -350,7 +350,8 @@ export const AdminProductsPage: React.FC = () => {
           <div className="py-16 text-center text-xs text-muted">{t('لا توجد عطور مطابقة للكتالوج', 'No fragrance products found')}</div>
         ) : (
           <>
-            <div className="overflow-x-auto rounded-2xl border border-outline-variant/15">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto rounded-2xl border border-outline-variant/15">
               <table className="w-full text-right text-xs font-sans">
                 <thead className="bg-secondary-bg/80 text-muted uppercase text-[10px] border-b border-outline-variant/15">
                   <tr>
@@ -387,11 +388,10 @@ export const AdminProductsPage: React.FC = () => {
                           {sizesText}
                         </td>
                         <td className="py-3.5 px-4">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                            p.status === 'active' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                            p.status === 'out_of_stock' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
-                            'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                          }`}>
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${p.status === 'active' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                              p.status === 'out_of_stock' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                                'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                            }`}>
                             {p.status}
                           </span>
                         </td>
@@ -420,6 +420,58 @@ export const AdminProductsPage: React.FC = () => {
               </table>
             </div>
 
+            {/* Mobile Responsive Cards View */}
+            <div className="md:hidden space-y-3">
+              {products.map((p) => {
+                const sizesText = p.volumeOptions && p.volumeOptions.length > 0
+                  ? p.volumeOptions.map(v => `${v.size}: ${v.price} KWD`).join(' | ')
+                  : `${p.price} KWD`;
+
+                return (
+                  <div key={p.id} className="p-4 bg-secondary-bg/40 border border-outline-variant/20 rounded-2xl space-y-3">
+                    <div className="flex items-center gap-3">
+                      <SafeImage src={p.image} alt={p.name} className="w-14 h-14 object-cover rounded-xl shrink-0 border border-outline-variant/20" />
+                      <div className="flex-1 truncate">
+                        <div className="font-bold text-on-surface text-sm truncate">{p.name}</div>
+                        <div className="text-xs text-muted truncate">{p.nameEn}</div>
+                        <span className="text-[10px] font-mono text-primary font-bold">{p.category}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-xs font-mono font-bold text-primary bg-secondary-bg/60 p-2 rounded-xl border border-outline-variant/15">
+                      {sizesText}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-outline-variant/15 text-xs">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        p.status === 'active' ? 'bg-success/20 text-success-text border border-success/30' :
+                        p.status === 'out_of_stock' ? 'bg-warning/20 text-warning-text border border-warning/30' :
+                        'bg-secondary-bg text-muted border border-outline-variant/30'
+                      }`}>
+                        {p.status}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleOpenEdit(p)}
+                          className="px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary font-bold rounded-xl text-xs flex items-center gap-1 hover:bg-primary hover:text-on-primary transition-all"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                          <span>{t('تعديل', 'Edit')}</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          className="p-1.5 text-error hover:bg-error/10 rounded-xl transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Server-Side Pagination */}
             <Pagination
               currentPage={pagination.currentPage}
@@ -437,7 +489,7 @@ export const AdminProductsPage: React.FC = () => {
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="glass-panel-gold rounded-3xl p-6 md:p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto space-y-6 relative border border-primary/30 shadow-2xl">
-            
+
             {/* Header */}
             <div className="flex items-center justify-between border-b border-outline-variant/15 pb-4">
               <div className="flex items-center gap-2">
@@ -456,9 +508,8 @@ export const AdminProductsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('basic')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'basic' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
+                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${activeTab === 'basic' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
+                  }`}
               >
                 <Layers className="w-4 h-4" />
                 <span>{t('البيانات والصور (Multer)', 'Basic & Media')}</span>
@@ -466,9 +517,8 @@ export const AdminProductsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('bilingual')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'bilingual' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
+                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${activeTab === 'bilingual' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
+                  }`}
               >
                 <Globe className="w-4 h-4" />
                 <span>{t('النصوص الثنائية', 'Bilingual Content')}</span>
@@ -476,9 +526,8 @@ export const AdminProductsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('variants')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'variants' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
+                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${activeTab === 'variants' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
+                  }`}
               >
                 <Package className="w-4 h-4" />
                 <span>{t('الأحجام والأسعار (KWD)', 'Size Variants & Pricing')}</span>
@@ -486,9 +535,8 @@ export const AdminProductsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('notes')}
-                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'notes' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
-                }`}
+                className={`px-4 py-2.5 rounded-t-xl transition-all border-b-2 flex items-center gap-2 ${activeTab === 'notes' ? 'border-primary text-primary bg-primary/10' : 'border-transparent text-muted hover:text-on-surface'
+                  }`}
               >
                 <Sparkles className="w-4 h-4" />
                 <span>{t('النوتات العطرية', 'Olfactory Notes')}</span>
@@ -496,7 +544,7 @@ export const AdminProductsPage: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              
+
               {/* Tab 1: Basic Info & Image Upload */}
               {activeTab === 'basic' && (
                 <div className="space-y-4 text-xs">
