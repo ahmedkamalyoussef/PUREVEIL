@@ -88,6 +88,8 @@ export const registerAdmin = async (req, res) => {
       success: false,
       message: "خطأ في الخادم أثناء إنشاء حساب المسؤول",
       messageEn: "Server error during admin registration",
+      error: error.message,
     });
   }
 };
+
