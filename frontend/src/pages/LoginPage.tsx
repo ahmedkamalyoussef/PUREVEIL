@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, ArrowRight } from 'lucide-react';
+
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
@@ -76,32 +77,6 @@ export const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Quick Demo Credentials Notice */}
-          <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 text-xs space-y-1.5 text-on-surface-variant">
-            <div className="font-semibold text-primary flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" />
-              <span>{t('حسابات التجربة (2 أداوار):', 'Demo Accounts (2 Roles):')}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>{t('مدير النظام (Admin):', 'Admin:')}</span>
-              <button
-                onClick={() => { setEmail('admin@pureveil.com'); setPassword('Admin@123'); }}
-                className="text-primary underline font-mono text-[11px]"
-              >
-                admin@pureveil.com
-              </button>
-            </div>
-            <div className="flex justify-between">
-              <span>{t('مستخدم عادي (User):', 'User:')}</span>
-              <button
-                onClick={() => { setEmail('mohammed@example.com'); setPassword('User@123'); }}
-                className="text-primary underline font-mono text-[11px]"
-              >
-                mohammed@example.com
-              </button>
-            </div>
-          </div>
-
           {/* Error */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3.5 text-xs text-red-400 text-center">
@@ -121,12 +96,13 @@ export const LoginPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="admin@pureveil.com"
+                  placeholder="your@email.com"
                   className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl px-4 py-3.5 pl-11 text-sm text-on-surface focus:outline-none focus:border-primary transition-colors font-mono"
                 />
                 <Mail className="w-4 h-4 text-muted absolute left-4 top-1/2 -translate-y-1/2" />
               </div>
             </div>
+
 
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant mb-2">
