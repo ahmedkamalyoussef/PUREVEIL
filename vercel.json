@@ -5,8 +5,10 @@
       "framework": "vite"
     },
     "backend": {
-      "root": "backend"
+      "root": "backend",
+      "entrypoint": "api/index.js"
     }
+
   },
   "rewrites": [
     {
