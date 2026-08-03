@@ -36,8 +36,9 @@ export const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = (
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 md:p-20 bg-background/80 backdrop-blur-md flex justify-center items-start animate-fade-in">
-      <div className="w-full max-w-3xl glass-panel-gold rounded-2xl p-6 shadow-2xl relative border border-primary/40">
+    <div className="fixed top-16 sm:top-20 inset-x-0 bottom-0 z-40 overflow-y-auto p-4 sm:p-6 md:p-10 bg-background/80 backdrop-blur-md flex justify-center items-start pt-6 sm:pt-10 animate-fade-in">
+      <div className="w-full max-w-3xl glass-panel-gold rounded-2xl p-6 shadow-2xl relative border border-primary/40 max-h-[85dvh] overflow-y-auto">
+
         
         {/* Header & Input */}
         <div className="relative flex items-center border-b border-outline-variant/30 pb-4">

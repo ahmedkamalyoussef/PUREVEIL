@@ -1,17 +1,120 @@
 import pool from "../config/db.js";
 
-// Ensure payment_status column exists in orders table
-const ensurePaymentStatusColumn = async () => {
+// Ensure payment_status column & order_status_history table exist in database
+const ensureSchemaUpdates = async () => {
   try {
     const [cols] = await pool.query("SHOW COLUMNS FROM orders LIKE 'payment_status'");
     if (cols.length === 0) {
       await pool.query("ALTER TABLE orders ADD COLUMN payment_status ENUM('paid', 'unpaid', 'refunded') DEFAULT 'paid'");
     }
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS order_status_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        note TEXT DEFAULT NULL,
+        note_en TEXT DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB;
+    `);
   } catch (err) {
-    // Ignore error if already exists
+    console.error("ensureSchemaUpdates error:", err);
   }
 };
-ensurePaymentStatusColumn();
+ensureSchemaUpdates();
+
+// Helper to get bilingual default notes for order status changes
+const getDefaultNotesForStatus = (status) => {
+  switch (status) {
+    case "pending":
+      return {
+        ar: "تم استقبال الطلب بنجاح وهو قيد الانتظار والمراجعة.",
+        en: "Order has been placed successfully and is pending review.",
+      };
+    case "confirmed":
+    case "processing":
+    case "preparing":
+    case "packed":
+      return {
+        ar: "جاري تحضير وتغليف عطورك الفاخرة بعناية.",
+        en: "Your order is being processed and packaged.",
+      };
+    case "shipped":
+    case "out_for_delivery":
+      return {
+        ar: "تم تسليم الشحنة لشركة التوصيل وهو في الطريق إليك.",
+        en: "Your package has been shipped and is on its way.",
+      };
+    case "delivered":
+      return {
+        ar: "تم تسليم الطلب بنجاح. شكراً لتسوقك من دار بيور فيل.",
+        en: "Order delivered successfully. Thank you for choosing PURE VEIL.",
+      };
+    case "cancelled":
+      return {
+        ar: "تم إلغاء الطلب.",
+        en: "The order has been cancelled.",
+      };
+    case "refunded":
+      return {
+        ar: "تم استرجاع مبلغ الطلب.",
+        en: "Order amount has been refunded.",
+      };
+    case "returned":
+      return {
+        ar: "تم إرجاع الطلب للمتجر.",
+        en: "Order has been returned to store.",
+      };
+    default:
+      return {
+        ar: `تم تحديث حالة الطلب إلى ${status}.`,
+        en: `Order status updated to ${status}.`,
+      };
+  }
+};
+
+// Map status to 4-stage progress index (1 to 4, or 0 for exceptional states)
+const getProgressStageInfo = (status) => {
+  switch (status) {
+    case "pending":
+      return { step: 1, key: "pending" };
+    case "processing":
+    case "preparing":
+    case "confirmed":
+    case "packed":
+      return { step: 2, key: "processing" };
+    case "shipped":
+    case "out_for_delivery":
+      return { step: 3, key: "shipped" };
+    case "delivered":
+      return { step: 4, key: "delivered" };
+    case "cancelled":
+      return { step: 0, key: "cancelled" };
+    case "refunded":
+      return { step: 0, key: "refunded" };
+    case "returned":
+      return { step: 0, key: "returned" };
+    default:
+      return { step: 1, key: "pending" };
+  }
+};
+
+// Calculate estimated delivery text
+const getEstimatedDelivery = (status, createdAtDate) => {
+  if (status === "delivered") {
+    return { ar: "تم التسليم", en: "Delivered" };
+  }
+  if (status === "cancelled" || status === "refunded" || status === "returned") {
+    return { ar: "طلب غير نشط", en: "Inactive Order" };
+  }
+  if (status === "shipped" || status === "out_for_delivery") {
+    return { ar: "خلال 24 ساعة", en: "Within 24 hours" };
+  }
+  return { ar: "خلال 1 - 3 أيام عمل", en: "Within 1 - 3 business days" };
+};
+
 
 export const createOrder = async (req, res) => {
   try {
@@ -37,6 +140,13 @@ export const createOrder = async (req, res) => {
         [orderId, item.productId || null, item.name, item.size || null, item.price, item.quantity || 1]
       );
     }
+
+    // Insert initial status history event
+    const defaultNotes = getDefaultNotesForStatus("pending");
+    await pool.query(
+      "INSERT INTO order_status_history (order_id, status, note, note_en) VALUES (?, 'pending', ?, ?)",
+      [orderId, defaultNotes.ar, defaultNotes.en]
+    );
 
     // Clear user's cart after order creation
     if (userId) {
@@ -125,7 +235,6 @@ export const getOrders = async (req, res) => {
     }
 
     // Date Range Presets & Custom Dates
-    const now = new Date();
     if (datePreset === "today") {
       whereConditions.push("DATE(o.created_at) = CURRENT_DATE()");
     } else if (datePreset === "yesterday") {
@@ -179,7 +288,7 @@ export const getOrders = async (req, res) => {
       [...params, pageSize, offset]
     );
 
-    // Attach items with product images to each order
+    // Attach items with product images and calculated metadata to each order
     for (const order of orders) {
       const [items] = await pool.query(
         `SELECT oi.*, p.image AS product_image
@@ -199,10 +308,18 @@ export const getOrders = async (req, res) => {
         productImage: i.product_image,
       }));
 
+      order.itemCount = items.reduce((acc, item) => acc + (item.quantity || 1), 0);
+      order.previewImages = items.map((i) => i.product_image).filter(Boolean).slice(0, 3);
+
       order.subtotal = Number(order.subtotal);
       order.shippingFee = Number(order.shipping_fee);
       order.total = Number(order.total);
       order.paymentStatus = order.payment_status || "paid";
+
+      const stageInfo = getProgressStageInfo(order.status);
+      order.currentStageStep = stageInfo.step;
+      order.currentStageKey = stageInfo.key;
+      order.estimatedDelivery = getEstimatedDelivery(order.status, order.created_at);
     }
 
     res.json({
@@ -223,10 +340,106 @@ export const getOrders = async (req, res) => {
   }
 };
 
+export const getOrderById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [orders] = await pool.query("SELECT * FROM orders WHERE id = ?", [id]);
+    if (orders.length === 0) {
+      return res.status(404).json({ success: false, message: "الطلب غير موجود", messageEn: "Order not found" });
+    }
+
+    const order = orders[0];
+
+    // Access control check (only owner or admin can view)
+    if (req.user.role !== "admin" && order.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, message: "غير مسموح بالوصول لهذا الطلب", messageEn: "Access denied" });
+    }
+
+    // Fetch items with product images
+    const [items] = await pool.query(
+      `SELECT oi.*, p.image AS product_image, p.id AS actual_product_id
+       FROM order_items oi
+       LEFT JOIN products p ON oi.product_id = p.id
+       WHERE oi.order_id = ?`,
+      [id]
+    );
+
+    order.items = items.map((i) => ({
+      id: i.id,
+      productId: i.product_id || i.actual_product_id,
+      name: i.name,
+      size: i.size,
+      price: Number(i.price),
+      quantity: i.quantity,
+      productImage: i.product_image,
+    }));
+
+    order.itemCount = items.reduce((acc, item) => acc + (item.quantity || 1), 0);
+    order.subtotal = Number(order.subtotal);
+    order.shippingFee = Number(order.shipping_fee);
+    order.total = Number(order.total);
+    order.paymentStatus = order.payment_status || "paid";
+
+    // Fetch status history timeline events (newest first)
+    const [historyRows] = await pool.query(
+      "SELECT * FROM order_status_history WHERE order_id = ? ORDER BY created_at DESC",
+      [id]
+    );
+
+    let timelineEvents = historyRows.map((h) => ({
+      id: h.id,
+      status: h.status,
+      note: h.note,
+      noteEn: h.note_en,
+      createdAt: h.created_at,
+    }));
+
+    // Synthesize fallback events if history was empty for legacy order
+    if (timelineEvents.length === 0) {
+      const defaultInitial = getDefaultNotesForStatus("pending");
+      timelineEvents.push({
+        id: 1,
+        status: "pending",
+        note: defaultInitial.ar,
+        noteEn: defaultInitial.en,
+        createdAt: order.created_at,
+      });
+
+      if (order.status !== "pending") {
+        const defaultCurrent = getDefaultNotesForStatus(order.status);
+        timelineEvents.unshift({
+          id: 2,
+          status: order.status,
+          note: defaultCurrent.ar,
+          noteEn: defaultCurrent.en,
+          createdAt: order.updated_at || order.created_at,
+        });
+      }
+    }
+
+    // Calculate progress tracker stages (7 stages)
+    const stageInfo = getProgressStageInfo(order.status);
+    order.currentStageStep = stageInfo.step;
+    order.currentStageKey = stageInfo.key;
+    order.estimatedDelivery = getEstimatedDelivery(order.status, order.created_at);
+    order.timeline = timelineEvents;
+
+    res.json({
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    console.error("getOrderById error:", error);
+    res.status(500).json({ success: false, message: "خطأ في الخادم", messageEn: "Server error" });
+  }
+};
+
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { status } = req.body;
-    const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
+    const { status, note, noteEn } = req.body;
+    const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled", "refunded", "returned", "confirmed", "preparing", "packed", "out_for_delivery"];
+
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ success: false, message: "حالة غير صالحة", messageEn: "Invalid status" });
     }
@@ -237,6 +450,17 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     await pool.query("UPDATE orders SET status = ? WHERE id = ?", [status, req.params.id]);
+
+    // Record timeline entry in order_status_history
+    const defaultNotes = getDefaultNotesForStatus(status);
+    const finalNoteAr = note || defaultNotes.ar;
+    const finalNoteEn = noteEn || defaultNotes.en;
+
+    await pool.query(
+      "INSERT INTO order_status_history (order_id, status, note, note_en) VALUES (?, ?, ?, ?)",
+      [req.params.id, status, finalNoteAr, finalNoteEn]
+    );
+
     const [rows] = await pool.query("SELECT * FROM orders WHERE id = ?", [req.params.id]);
     res.json({ success: true, data: rows[0] });
   } catch (error) {
@@ -266,3 +490,4 @@ export const updatePaymentStatus = async (req, res) => {
     res.status(500).json({ success: false, message: "خطأ في الخادم", messageEn: "Server error" });
   }
 };
+

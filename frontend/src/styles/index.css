@@ -90,3 +90,42 @@
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* Dedicated Print Architecture for A4 Order Invoice */
+@media print {
+  body > *:not(#printable-order-invoice) {
+    display: none !important;
+  }
+
+  #printable-order-invoice {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  #printable-order-invoice * {
+    visibility: visible !important;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+}

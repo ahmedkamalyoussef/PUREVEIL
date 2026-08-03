@@ -196,11 +196,15 @@ export const AdminOrdersPage: React.FC = () => {
               className="w-full bg-secondary-bg/80 border border-outline-variant/30 rounded-xl py-2.5 px-3 text-xs text-on-surface focus:border-primary focus:outline-none"
             >
               <option value="">{t('جميع حالات الطلب', 'All Order Statuses')}</option>
-              <option value="pending">{t('قيد الانتظار', 'Pending')}</option>
+              <option value="pending">{t('تم تقديم الطلب', 'Order Placed')}</option>
               <option value="processing">{t('قيد التجهيز', 'Processing')}</option>
               <option value="shipped">{t('تم الشحن', 'Shipped')}</option>
               <option value="delivered">{t('تم التسليم', 'Delivered')}</option>
               <option value="cancelled">{t('ملغى', 'Cancelled')}</option>
+              <option value="refunded">{t('مسترجع', 'Refunded')}</option>
+              <option value="returned">{t('مُعَاد', 'Returned')}</option>
+
+
             </select>
           </div>
 
@@ -403,11 +407,13 @@ export const AdminOrdersPage: React.FC = () => {
                               onChange={(e) => handleStatusChange(o.id, e.target.value)}
                               className={`rounded-xl px-2.5 py-1 text-xs font-bold border focus:outline-none ${statusInfo.bg}`}
                             >
-                              <option value="pending">{t('قيد الانتظار', 'Pending')}</option>
+                              <option value="pending">{t('تم تقديم الطلب', 'Order Placed')}</option>
                               <option value="processing">{t('قيد التجهيز', 'Processing')}</option>
                               <option value="shipped">{t('تم الشحن', 'Shipped')}</option>
                               <option value="delivered">{t('تم التسليم', 'Delivered')}</option>
                               <option value="cancelled">{t('ملغى', 'Cancelled')}</option>
+                              <option value="refunded">{t('مسترجع', 'Refunded')}</option>
+                              <option value="returned">{t('مُعَاد', 'Returned')}</option>
                             </select>
                           </div>
                         </td>
@@ -464,12 +470,15 @@ export const AdminOrdersPage: React.FC = () => {
                         onChange={(e) => handleStatusChange(o.id, e.target.value)}
                         className={`rounded-xl px-2.5 py-1 text-xs font-bold border ${statusInfo.bg}`}
                       >
-                        <option value="pending">{t('قيد الانتظار', 'Pending')}</option>
+                        <option value="pending">{t('تم تقديم الطلب', 'Order Placed')}</option>
                         <option value="processing">{t('قيد التجهيز', 'Processing')}</option>
                         <option value="shipped">{t('تم الشحن', 'Shipped')}</option>
                         <option value="delivered">{t('تم التسليم', 'Delivered')}</option>
                         <option value="cancelled">{t('ملغى', 'Cancelled')}</option>
+                        <option value="refunded">{t('مسترجع', 'Refunded')}</option>
+                        <option value="returned">{t('مُعَاد', 'Returned')}</option>
                       </select>
+
 
                       <button
                         onClick={() => setSelectedOrder(o)}
@@ -504,8 +513,10 @@ export const AdminOrdersPage: React.FC = () => {
           onClose={() => setSelectedOrder(null)}
           onUpdateStatus={handleStatusChange}
           onUpdatePaymentStatus={handlePaymentStatusChange}
+          isAdminView={true}
         />
       )}
     </div>
   );
 };
+

@@ -22,6 +22,8 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage';
+import { MyOrdersPage } from './pages/MyOrdersPage';
+
 
 import { SettingsProvider } from './contexts/SettingsContext';
 
@@ -109,6 +111,23 @@ export const PublicLayout: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <MyOrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-orders"
+            element={
+              <ProtectedRoute>
+                <MyOrdersPage />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
       </main>
       <CartDrawer />

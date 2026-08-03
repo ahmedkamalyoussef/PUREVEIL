@@ -63,8 +63,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const Icon = config.icon;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="glass-panel-gold rounded-3xl p-6 md:p-8 w-full max-w-md space-y-6 relative border border-primary/40 shadow-2xl animate-in zoom-in-95 duration-200">
+    <div className="fixed top-16 sm:top-20 inset-x-0 bottom-0 z-40 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+      <div className="glass-panel-gold rounded-3xl p-6 md:p-8 w-full max-w-md space-y-6 relative border border-primary/40 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[85dvh] overflow-y-auto my-auto">
+
 
         <button
           onClick={onCancel}

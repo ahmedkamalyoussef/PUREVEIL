@@ -252,8 +252,18 @@ export const fetchOrdersApi = async (params?: Record<string, any>): Promise<Pagi
   }
 };
 
-export const updateOrderStatusApi = async (id: number | string, status: string): Promise<Order> => {
-  const response = await api.put(`/orders/${id}/status`, { status });
+export const fetchOrderByIdApi = async (id: number | string): Promise<Order | null> => {
+  try {
+    const response = await api.get(`/orders/${id}`);
+    return response.data.data;
+  } catch (error) {
+    console.error(`Failed to fetch order ${id}:`, error);
+    return null;
+  }
+};
+
+export const updateOrderStatusApi = async (id: number | string, status: string, note?: string, noteEn?: string): Promise<Order> => {
+  const response = await api.put(`/orders/${id}/status`, { status, note, noteEn });
   return response.data.data;
 };
 
@@ -261,6 +271,7 @@ export const updatePaymentStatusApi = async (id: number | string, paymentStatus:
   const response = await api.put(`/orders/${id}/payment-status`, { paymentStatus });
   return response.data.data;
 };
+
 
 // Users API (Admin)
 export const fetchUsersApi = async (params?: Record<string, any>): Promise<PaginatedResponse<User>> => {

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { User as UserIcon, Lock, Save, KeyRound, LogOut } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { User as UserIcon, Lock, Save, KeyRound, LogOut, Package } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmModalContext';
 import { updateProfileApi, updatePasswordApi } from '../services/apiService';
+
 
 export const AccountSettingsPage: React.FC = () => {
   const { user, setUser, logout } = useAuth();
@@ -82,17 +84,27 @@ export const AccountSettingsPage: React.FC = () => {
             {t('إعدادات الحساب الشخصي', 'Account Settings')}
           </h1>
           <p className="text-sm text-on-surface-variant mt-1">
-            {t('إدارة بيانات حسابك في دار بيور فيل وكلمة المرور', 'Manage your personal profile and security in PURE VEIL')}
+            {t('إدارة بيانات حسابك في دار بيور فيل وكلمة المرور ومتابعة الطلبات', 'Manage your personal profile, security, and track your orders')}
           </p>
         </div>
-        <button
-          onClick={handleLogoutConfirm}
-          className="px-5 py-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors text-xs font-semibold flex items-center gap-2 w-fit"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>{t('تسجيل الخروج', 'Sign Out')}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/orders"
+            className="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-gold-glow"
+          >
+            <Package className="w-4 h-4" />
+            <span>{t('طلباتي والتتبع', 'My Orders')}</span>
+          </Link>
+          <button
+            onClick={handleLogoutConfirm}
+            className="px-5 py-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors text-xs font-semibold flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>{t('تسجيل الخروج', 'Sign Out')}</span>
+          </button>
+        </div>
       </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 

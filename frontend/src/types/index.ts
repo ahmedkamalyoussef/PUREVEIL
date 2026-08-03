@@ -119,6 +119,14 @@ export interface OrderItem {
   product_image?: string;
 }
 
+export interface TimelineEvent {
+  id: number;
+  status: string;
+  note?: string;
+  noteEn?: string;
+  createdAt: string;
+}
+
 export interface Order {
   id: number;
   user_id?: number | null;
@@ -133,16 +141,28 @@ export interface Order {
   shipping_fee: number;
   shippingFee?: number;
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'processing' | 'preparing' | 'packed' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | string;
   payment_status?: 'paid' | 'unpaid' | 'refunded';
   paymentStatus?: 'paid' | 'unpaid' | 'refunded';
   payment_method?: string;
   paymentMethod?: string;
   created_at?: string;
   createdAt?: string;
+  updated_at?: string;
+  updatedAt?: string;
   date?: string;
   items?: OrderItem[];
+  itemCount?: number;
+  previewImages?: string[];
+  currentStageStep?: number;
+  currentStageKey?: string;
+  estimatedDelivery?: {
+    ar: string;
+    en: string;
+  };
+  timeline?: TimelineEvent[];
 }
+
 
 export interface DashboardStats {
   totalRevenue: number;

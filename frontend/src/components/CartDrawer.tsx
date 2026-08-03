@@ -13,15 +13,16 @@ export const CartDrawer: React.FC = () => {
   if (!isCartOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed top-16 sm:top-20 inset-x-0 bottom-0 z-40 overflow-hidden">
       {/* Backdrop */}
       <div
         onClick={() => setIsCartOpen(false)}
         className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed top-16 sm:top-20 bottom-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-md bg-surface-container-lowest border-l border-outline-variant/15 p-6 flex flex-col justify-between shadow-2xl relative">
+
 
           {/* Header */}
           <div className="flex items-center justify-between border-b border-outline-variant/15 pb-4">

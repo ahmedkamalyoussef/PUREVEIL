@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Search, User as UserIcon, Heart, Globe, Menu, X, LogOut, Shield, Settings, ChevronDown, FolderTree, Home, Sparkles } from 'lucide-react';
+import { ShoppingBag, Search, User as UserIcon, Heart, Globe, Menu, X, LogOut, Shield, Settings, ChevronDown, FolderTree, Home, Sparkles, Package } from 'lucide-react';
+
 import { useCart } from '../contexts/CartContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -235,6 +236,14 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
                         </Link>
                       )}
                       <Link
+                        to="/orders"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-on-surface hover:bg-secondary-bg rounded-xl transition-colors font-medium"
+                      >
+                        <Package className="w-4 h-4 text-primary" />
+                        <span>{t('طلباتي والتتبع', 'My Orders')}</span>
+                      </Link>
+                      <Link
                         to="/account"
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-on-surface hover:bg-secondary-bg rounded-xl transition-colors"
@@ -242,6 +251,7 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
                         <Settings className="w-4 h-4" />
                         <span>{t('إعدادات الحساب', 'Account Settings')}</span>
                       </Link>
+
                       <button
                         onClick={() => { logout(); setUserDropdownOpen(false); navigate('/'); }}
                         className="w-full flex items-center gap-2.5 px-3 py-2 text-error hover:bg-error/10 rounded-xl transition-colors font-semibold"
@@ -367,6 +377,15 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
                   )}
 
                   <Link
+                    to="/orders"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3.5 p-3.5 bg-primary/10 text-primary rounded-2xl text-sm sm:text-base font-semibold border border-primary/20"
+                  >
+                    <Package className="w-5 h-5 text-primary" />
+                    <span>{t('طلباتي والتتبع', 'My Orders')}</span>
+                  </Link>
+
+                  <Link
                     to="/account"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3.5 p-3.5 bg-secondary-bg rounded-2xl text-on-surface text-sm sm:text-base font-semibold"
@@ -374,6 +393,7 @@ export const Navbar: React.FC<{ onOpenSearch: () => void }> = ({ onOpenSearch })
                     <Settings className="w-5 h-5 text-muted" />
                     <span>{t('إعدادات الحساب', 'Account Settings')}</span>
                   </Link>
+
 
                   <button
                     onClick={() => { logout(); setMobileMenuOpen(false); navigate('/'); }}
