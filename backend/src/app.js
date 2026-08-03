@@ -12,6 +12,7 @@ import favoriteRoutes from "./routes/favoriteRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
 
 const app = express();
@@ -39,6 +40,11 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/favorites", favoriteRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/settings", settingsRoutes);
+
+// Admin Routes (Backend Only / Setup)
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/admin", adminRoutes);
+
 
 // Error Middleware
 app.use(errorHandler);

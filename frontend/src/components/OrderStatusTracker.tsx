@@ -85,79 +85,90 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
         </span>
       </div>
 
-      {/* Progress Bar Container */}
-      <div className="relative overflow-x-auto pb-4 pt-2 no-scrollbar">
-        <div className="min-w-[480px] sm:min-w-0 px-2 sm:px-4">
-          <div className="relative flex items-center justify-between">
-            {/* Background Connector Line */}
-            <div className="absolute top-5 left-8 right-8 h-1 bg-outline-variant/20 rounded-full -z-0" />
+      {/* Progress Tracker Segmented Nodes & Connectors */}
+      <div className="w-full pt-2 pb-1">
+        {/* Step Circles & Segment Connectors Row */}
+        <div className="flex items-center justify-between w-full px-2 sm:px-6">
+          {PROGRESS_STAGES_LIST.map((stage, idx) => {
+            const isCompleted = stage.step < activeStep;
+            const isCurrent = stage.step === activeStep;
+            const isSegmentActive = idx < activeStep - 1;
 
-            {/* Active Filled Progress Line */}
-            <div
-              className="absolute top-5 left-8 h-1 bg-gradient-to-r from-primary to-amber-300 rounded-full transition-all duration-700 ease-out -z-0 rtl:right-8 rtl:left-auto"
-              style={{
-                width: `${Math.max(0, Math.min(100, ((activeStep - 1) / (PROGRESS_STAGES_LIST.length - 1)) * 100))}%`,
-              }}
-            />
+            const stageConfig = getStatusConfig(stage.key);
+            const StageIcon = stageConfig.icon;
 
-            {/* 4 Primary Stages */}
-            {PROGRESS_STAGES_LIST.map((stage) => {
-              const isCompleted = stage.step < activeStep;
-              const isCurrent = stage.step === activeStep;
+            return (
+              <React.Fragment key={stage.key}>
+                {/* Segment Line Connector between Nodes */}
+                {idx > 0 && (
+                  <div className="flex-1 h-0.5 sm:h-1 mx-1.5 sm:mx-3 rounded-full overflow-hidden bg-outline-variant/20">
+                    <div
+                      className={`h-full transition-all duration-700 ease-out ${
+                        isSegmentActive
+                          ? 'bg-gradient-to-r from-primary to-amber-300'
+                          : 'bg-transparent'
+                      }`}
+                    />
+                  </div>
+                )}
 
-              const stageConfig = getStatusConfig(stage.key);
-              const StageIcon = stageConfig.icon;
-
-              return (
-                <div
-                  key={stage.key}
-                  className="flex flex-col items-center relative group z-10"
-                >
-                  {/* Step Node Circle */}
+                {/* Node Circle */}
+                <div className="flex flex-col items-center shrink-0">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                       isCompleted
                         ? 'bg-primary text-on-primary shadow-gold-glow scale-100'
                         : isCurrent
-                        ? 'bg-background border-2 border-primary text-primary shadow-[0_0_15px_rgba(212,175,55,0.5)] scale-110'
-                        : 'bg-secondary-bg border border-outline-variant/30 text-muted'
+                        ? 'bg-background border-2 border-primary text-primary shadow-[0_0_15px_rgba(212,175,55,0.5)] scale-105 sm:scale-110'
+                        : 'bg-secondary-bg border border-outline-variant/30 text-muted/60'
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="w-5 h-5 stroke-[3]" />
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3]" />
                     ) : isCurrent ? (
                       <div className="relative flex items-center justify-center">
-                        <StageIcon className="w-5 h-5 text-primary animate-pulse" />
+                        <StageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary animate-pulse" />
                         <span className="absolute -inset-1 rounded-full bg-primary/20 animate-ping" />
                       </div>
                     ) : (
-                      <StageIcon className="w-4 h-4 text-muted/60" />
-                    )}
-                  </div>
-
-                  {/* Stage Label */}
-                  <div className="mt-3 text-center max-w-[90px]">
-                    <span
-                      className={`block text-[11px] sm:text-xs leading-tight font-medium transition-colors ${
-                        isCompleted
-                          ? 'text-primary font-bold'
-                          : isCurrent
-                          ? 'text-on-surface font-extrabold font-serif'
-                          : 'text-muted/70'
-                      }`}
-                    >
-                      {lang === 'ar' ? stage.nameAr : stage.nameEn}
-                    </span>
-                    {isCurrent && (
-                      <span className="inline-block mt-1 w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
+                      <StageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted/60" />
                     )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Step Labels Row */}
+        <div className="flex justify-between w-full mt-2.5 px-0 sm:px-2">
+          {PROGRESS_STAGES_LIST.map((stage) => {
+            const isCompleted = stage.step < activeStep;
+            const isCurrent = stage.step === activeStep;
+
+            return (
+              <div key={stage.key} className="flex-1 text-center px-0.5">
+                <span
+                  className={`block text-[9.5px] sm:text-xs leading-tight font-medium transition-colors ${
+                    isCompleted
+                      ? 'text-primary font-bold'
+                      : isCurrent
+                      ? 'text-on-surface font-extrabold font-serif'
+                      : 'text-muted/70'
+                  }`}
+                >
+                  {lang === 'ar' ? stage.nameAr : stage.nameEn}
+                </span>
+                {isCurrent && (
+                  <span className="inline-block mt-0.5 w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary animate-bounce" />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
+
+
     </div>
   );
 };

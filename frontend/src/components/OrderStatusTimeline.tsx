@@ -31,7 +31,7 @@ export const OrderStatusTimeline: React.FC<OrderStatusTimelineProps> = ({
         </span>
       </div>
 
-      <div className="relative pl-6 rtl:pl-0 rtl:pr-6 space-y-6 before:absolute before:top-2 before:bottom-2 before:left-2 rtl:before:left-auto rtl:before:right-2 before:w-0.5 before:bg-outline-variant/20">
+      <div className="relative pl-5 rtl:pl-0 rtl:pr-5 sm:pl-6 sm:rtl:pr-6 space-y-4 sm:space-y-6 before:absolute before:top-2 before:bottom-2 before:left-1.5 rtl:before:left-auto rtl:before:right-1.5 sm:before:left-2 sm:rtl:before:right-2 before:w-0.5 before:bg-outline-variant/20">
         {timeline.map((event, index) => {
           const config = getStatusConfig(event.status);
           const EventIcon = config.icon || CheckCircle2;
@@ -57,14 +57,14 @@ export const OrderStatusTimeline: React.FC<OrderStatusTimelineProps> = ({
             <div key={event.id || index} className="relative group">
               {/* Timeline Bullet Node */}
               <div
-                className={`absolute -left-6 rtl:-left-auto rtl:-right-6 top-1.5 -translate-x-1/2 rtl:translate-x-1/2 w-4 h-4 rounded-full flex items-center justify-center border transition-all ${
+                className={`absolute -left-5 rtl:-left-auto rtl:-right-5 sm:-left-6 sm:rtl:-right-6 top-1.5 -translate-x-1/2 rtl:translate-x-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center border transition-all ${
                   isLatest
-                    ? 'bg-primary border-primary text-on-primary ring-4 ring-primary/20 scale-110'
+                    ? 'bg-primary border-primary text-on-primary ring-2 sm:ring-4 ring-primary/20 scale-110'
                     : 'bg-secondary-bg border-outline-variant/40 text-muted'
                 }`}
               >
                 <div
-                  className={`w-1.5 h-1.5 rounded-full ${
+                  className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${
                     isLatest ? 'bg-on-primary' : 'bg-muted/60'
                   }`}
                 />
@@ -72,12 +72,13 @@ export const OrderStatusTimeline: React.FC<OrderStatusTimelineProps> = ({
 
               {/* Event Content Card */}
               <div
-                className={`p-3.5 rounded-2xl border transition-all ${
+                className={`p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all ${
                   isLatest
                     ? 'bg-secondary-bg/80 border-primary/30 shadow-sm'
                     : 'bg-background/40 border-outline-variant/15 hover:bg-secondary-bg/40'
                 }`}
               >
+
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-outline-variant/10 pb-2 mb-2">
                   <div className="flex items-center gap-2">
                     <EventIcon

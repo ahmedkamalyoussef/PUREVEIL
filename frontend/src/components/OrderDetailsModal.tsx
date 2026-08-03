@@ -274,7 +274,60 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             </span>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-outline-variant/15">
+          {/* Mobile View: Compact Item Cards */}
+          <div className="md:hidden space-y-2.5">
+            {order.items && order.items.map((item, idx) => {
+              const productUrl = item.productId ? `/product/${item.productId}` : null;
+
+              return (
+                <div
+                  key={idx}
+                  className="p-3 bg-background/50 border border-outline-variant/15 rounded-2xl flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <SafeImage
+                      src={item.productImage || (item as any).product_image || ''}
+                      alt={item.name}
+                      className="w-12 h-12 object-cover rounded-xl border border-outline-variant/20 shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      {productUrl ? (
+                        <Link
+                          to={productUrl}
+                          onClick={onClose}
+                          className="font-bold text-xs text-on-surface hover:text-primary transition-colors truncate block"
+                        >
+                          {item.name}
+                        </Link>
+                      ) : (
+                        <span className="font-bold text-xs text-on-surface truncate block">{item.name}</span>
+                      )}
+                      <div className="flex items-center gap-2 mt-1 text-[10px] text-muted font-mono">
+                        <span className="px-1.5 py-0.5 rounded bg-secondary-bg border border-outline-variant/20">
+                          {item.size || '100ml'}
+                        </span>
+                        <span>x{item.quantity}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-left rtl:text-left ltr:text-right shrink-0 font-mono">
+                    <div className="text-xs font-bold gold-gradient-text">
+                      {(Number(item.price) * item.quantity).toFixed(3)} KWD
+                    </div>
+                    {item.quantity > 1 && (
+                      <div className="text-[9px] text-muted">
+                        {Number(item.price).toFixed(3)} KWD/{t('قطعة', 'pc')}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop View: Full Data Table */}
+          <div className="hidden md:block overflow-x-auto rounded-2xl border border-outline-variant/15">
             <table className="w-full text-xs text-right font-sans">
               <thead className="bg-secondary-bg/80 text-muted border-b border-outline-variant/15">
                 <tr>
@@ -327,6 +380,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             </table>
           </div>
         </div>
+
 
         {/* Payment Summary Financial Breakdown */}
         <div className="p-4 bg-secondary-bg/50 rounded-2xl border border-outline-variant/15 space-y-2 text-xs font-sans">

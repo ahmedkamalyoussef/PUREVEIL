@@ -333,19 +333,19 @@ export const MyOrdersPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                   
                   {/* Item Image Thumbnails Preview */}
-                  <div className="md:col-span-2 flex items-center gap-3 overflow-x-auto py-1">
+                  <div className="md:col-span-2 flex flex-wrap items-center gap-2 sm:gap-3 max-w-full py-1">
                     {o.items && o.items.slice(0, 3).map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2.5 p-2 bg-secondary-bg/60 border border-outline-variant/20 rounded-2xl shrink-0">
+                      <div key={idx} className="flex items-center gap-2 p-1.5 sm:p-2 bg-secondary-bg/60 border border-outline-variant/20 rounded-2xl max-w-full sm:max-w-none">
                         <SafeImage
                           src={item.productImage || (item as any).product_image || ''}
                           alt={item.name}
-                          className="w-12 h-12 object-cover rounded-xl border border-outline-variant/20"
+                          className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-xl border border-outline-variant/20 shrink-0"
                         />
-                        <div className="max-w-[120px] sm:max-w-[140px] truncate">
-                          <span className="font-bold text-xs text-on-surface truncate block">
+                        <div className="max-w-[100px] sm:max-w-[140px] truncate">
+                          <span className="font-bold text-[11px] sm:text-xs text-on-surface truncate block">
                             {item.name}
                           </span>
-                          <span className="text-[10px] text-muted block font-mono">
+                          <span className="text-[9.5px] sm:text-[10px] text-muted block font-mono">
                             {item.size || '100ml'} x {item.quantity}
                           </span>
                         </div>
@@ -353,11 +353,12 @@ export const MyOrdersPage: React.FC = () => {
                     ))}
 
                     {o.items && o.items.length > 3 && (
-                      <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 border border-primary/20 text-primary font-bold text-xs flex items-center justify-center shrink-0">
                         +{o.items.length - 3}
                       </div>
                     )}
                   </div>
+
 
                   {/* Order Total & Tracking CTA */}
                   <div className="flex flex-col md:items-end justify-between gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-outline-variant/15">

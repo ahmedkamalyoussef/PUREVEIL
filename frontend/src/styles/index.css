@@ -23,12 +23,16 @@
     display: none;
   }
 
-  body {
+  html,
+  body,
+  #root {
     background-color: #242A23;
     color: #B8B094;
     font-family: 'Inter', 'Manrope', sans-serif;
     overflow-x: hidden;
+    max-width: 100vw;
   }
+
 
   h1,
   h2,
