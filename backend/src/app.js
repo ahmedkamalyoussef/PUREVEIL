@@ -25,7 +25,7 @@ app.use(morgan("dev"));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Health check
-app.get("/api/v1/health", (req, res) => {
+app.get(["/", "/api", "/api/v1", "/api/v1/health"], (req, res) => {
   res.json({ status: "ok", brand: "PURE VEIL", time: new Date().toISOString() });
 });
 
@@ -44,6 +44,8 @@ app.use("/api/v1/settings", settingsRoutes);
 // Admin Routes (Backend Only / Setup)
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/admin", adminRoutes);
+
 
 
 // Error Middleware
